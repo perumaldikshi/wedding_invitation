@@ -229,3 +229,4 @@ wedding-invite/
 - **Audio Autoplay Safety**: Strictly user-initiated playback complying with modern browser media policies.
 - **Touch Target Standard**: All interactive buttons meet or exceed the 48×48px mobile touch guideline.
 - **Asset Efficiency**: Low-poly procedural 3D meshes and lightweight canvas particle emitters maintain 60 FPS on mid-range mobile devices.
+# wedding_invitation
