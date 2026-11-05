@@ -9,7 +9,7 @@ import { useWebGL } from '../../hooks/useWebGL';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import wedding from '../../config/wedding';
 
-function PhotoPlaceholder({ label, degree, subtitle, native, parents, emoji = '👰', delay = 0 }) {
+function PhotoPlaceholder({ label, degree, subtitle, native, parents, initial, delay = 0 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -33,7 +33,10 @@ function PhotoPlaceholder({ label, degree, subtitle, native, parents, emoji = '�
             boxShadow: '0 0 35px rgba(255, 215, 0, 0.35)',
           }}
         >
-          <span className="text-6xl md:text-7xl select-none" aria-hidden="true">{emoji}</span>
+          <div className="portrait-monogram" aria-label={`${label} portrait placeholder`}>
+            <span>{initial}</span>
+            <small>PORTRAIT</small>
+          </div>
         </div>
         {/* Outer Glowing Concentric Gold Rings */}
         <div
@@ -114,9 +117,9 @@ export default function CoupleReveal() {
           transition={{ duration: 0.8, type: 'spring' }}
           className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-gold-400/40 bg-gold-500/10 backdrop-blur-md mb-6 shadow-xl shadow-gold-500/10"
         >
-          <span className="text-xl">🪷</span>
+          <span className="mini-lotus" aria-hidden="true" />
           <span className="font-script text-2xl text-gold-300 font-bold tracking-wider">Sridhar &amp; Gowri</span>
-          <span className="text-xl">🪷</span>
+          <span className="mini-lotus" aria-hidden="true" />
         </motion.div>
 
         <motion.p
@@ -157,7 +160,7 @@ export default function CoupleReveal() {
             subtitle={wedding.groomOccupation}
             parents={`S/o. ${wedding.groomParents}`}
             native={wedding.groomNative}
-            emoji="🤵"
+            initial="S"
             delay={0.3}
           />
 
@@ -182,7 +185,7 @@ export default function CoupleReveal() {
             subtitle="Bride"
             parents={`D/o. ${wedding.brideParents}`}
             native={wedding.brideNative}
-            emoji="👰"
+            initial="G"
             delay={0.5}
           />
         </div>

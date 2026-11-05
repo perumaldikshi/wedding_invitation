@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipe } from '../../hooks/useTouch';
 import OrnamentalDivider from '../ui/OrnamentalDivider';
 import wedding from '../../config/wedding';
 
-function StoryCard({ chapter, isActive, direction }) {
+function StoryCard({ chapter, direction }) {
   const variants = {
     enter: (dir) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
     center: { x: 0, opacity: 1 },
@@ -40,13 +40,17 @@ function StoryCard({ chapter, isActive, direction }) {
               boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
             }}
           >
-            <span className="text-5xl mb-4" aria-hidden="true">🌸</span>
+            <svg width="58" height="58" viewBox="0 0 64 64" fill="none" stroke="#d4a017" strokeWidth="1.2" aria-hidden="true">
+              <path d="M32 51c-8-7-12-16 0-35 12 19 8 28 0 35Z" />
+              <path d="M29 51C18 48 12 40 14 26c13 7 17 15 15 25ZM35 51c11-3 17-11 15-25-13 7-17 15-15 25Z" />
+              <path d="M14 54h36" />
+            </svg>
             <p className="text-xs tracking-widest" style={{ color: 'rgba(212,160,23,0.5)' }}>
               Add your photo
             </p>
             {/* Ornamental corners */}
             {['top-3 left-3', 'top-3 right-3', 'bottom-3 left-3', 'bottom-3 right-3'].map((pos) => (
-              <div key={pos} className={`absolute ${pos} text-sm`} style={{ color: '#D4A017', opacity: 0.5 }} aria-hidden="true">✦</div>
+              <div key={pos} className={`absolute ${pos} card-corner-detail card-corner-light`} style={{ opacity: 0.55 }} aria-hidden="true" />
             ))}
           </div>
         )}
@@ -134,7 +138,7 @@ export default function OurStory() {
         aria-label={`Story slide ${current + 1} of ${chapters.length}: ${chapters[current].chapter}`}
       >
         <AnimatePresence custom={direction} mode="wait">
-          <StoryCard key={current} chapter={chapters[current]} isActive direction={direction} />
+          <StoryCard key={current} chapter={chapters[current]} direction={direction} />
         </AnimatePresence>
       </div>
 

@@ -137,7 +137,9 @@ export default function App() {
           aria-label={gyroEnabled ? 'Disable motion parallax' : 'Enable motion parallax'}
           title="Tilt device for 3D perspective"
         >
-          <span>📱</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <rect x="6" y="2" width="12" height="20" rx="2" /><path d="M10 18h4" />
+          </svg>
           <span>{gyroEnabled ? '3D Motion On' : '3D Motion'}</span>
         </button>
       )}

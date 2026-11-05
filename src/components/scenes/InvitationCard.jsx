@@ -136,7 +136,7 @@ export default function InvitationCard() {
       id="invitation"
       className="scene-section flex flex-col items-center justify-center px-4 py-20 min-h-screen relative"
       style={{
-        backgroundImage: "linear-gradient(180deg, rgba(8,3,2,.96), rgba(28,8,7,.84), rgba(8,3,2,.97)), url('/assets/palace-mandapam-portrait.png')",
+        backgroundImage: "linear-gradient(180deg, rgba(8,3,2,.96), rgba(28,8,7,.84), rgba(8,3,2,.97)), url('/assets/palace-mandapam-portrait.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -210,7 +210,7 @@ export default function InvitationCard() {
           {/* FRONT FACE */}
           <CardFace
             style={{
-              backgroundImage: "linear-gradient(rgba(255,246,222,.06), rgba(255,246,222,.06)), url('/assets/ivory-invitation-paper.png')",
+              backgroundImage: "linear-gradient(rgba(255,246,222,.06), rgba(255,246,222,.06)), url('/assets/ivory-invitation-paper.jpg')",
               backgroundSize: '100% 100%',
               backgroundPosition: 'center',
               color: '#4b2819',
@@ -254,7 +254,7 @@ export default function InvitationCard() {
             >
               {wedding.groomName} <span className="text-lg font-normal text-gold-400">({wedding.groomDegree})</span>
             </h3>
-            <p className="text-[11px] text-champagne/80 mb-2">{wedding.groomOccupation}</p>
+            <p className="text-[11px] mb-2" style={{ color: '#6c4630' }}>{wedding.groomOccupation}</p>
 
             <div className="font-script text-xl my-1" style={{ color: '#9d621c' }}>weds</div>
 
@@ -276,7 +276,7 @@ export default function InvitationCard() {
               13th Friday, November 2026
             </p>
 
-            <p className="text-xs text-center max-w-[280px] text-champagne/80 mb-4">
+            <p className="text-xs text-center max-w-[280px] mb-4" style={{ color: '#6c4630' }}>
               Mailam, Tamil Nadu
             </p>
 
@@ -347,4 +347,12 @@ export default function InvitationCard() {
               Best Compliments from: Friends & Relatives
             </div>
 
-            <p className="mt-3 text-[10px] tracking-wider text-center" style={{ color: 'rgba(255,21
+            <p className="mt-3 text-[10px] tracking-wider text-center" style={{ color: 'rgba(255,215,0,0.6)' }}>
+              Double-tap to close · Swipe to flip
+            </p>
+          </CardFace>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}

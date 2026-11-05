@@ -39,14 +39,21 @@ export default function LoadingScreen({ onComplete }) {
           role="status"
           aria-label="Loading wedding invitation"
         >
-          {/* Om symbol / lotus ornament */}
+          {/* Drawn lotus ornament */}
           <motion.div
             animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-6xl mb-8"
+            className="mb-8"
             aria-hidden="true"
           >
-            🪷
+            <svg width="76" height="62" viewBox="0 0 76 62" fill="none" stroke="#d7a748" strokeWidth="1.35">
+              <path d="M38 52c-9-7-15-18 0-41 15 23 9 34 0 41Z" />
+              <path d="M35 52C22 48 13 38 15 20c17 9 22 20 20 32Z" />
+              <path d="M41 52c13-4 22-14 20-32-17 9-22 20-20 32Z" />
+              <path d="M32 53C18 55 7 49 3 34c17 1 27 7 29 19Z" />
+              <path d="M44 53c14 2 25-4 29-19-17 1-27 7-29 19Z" />
+              <path d="M11 55h54" opacity=".65" />
+            </svg>
           </motion.div>
 
           <motion.h1

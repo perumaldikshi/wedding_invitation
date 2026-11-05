@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { CalendarPlus, MapPin, RotateCcw, Share2 } from 'lucide-react';
 import { shareInvitation } from '../../utils/shareInvitation';
 import { generateICS } from '../../utils/generateICS';
 import OrnamentalDivider from '../ui/OrnamentalDivider';
@@ -9,16 +10,15 @@ import wedding from '../../config/wedding';
 function FloatingPetal({ style }) {
   return (
     <div
-      className="absolute text-2xl pointer-events-none select-none"
+      className="absolute pointer-events-none select-none final-petal"
       style={{
         ...style,
-        animation: `petalFall ${8 + Math.random() * 6}s linear infinite`,
-        animationDelay: `${Math.random() * 8}s`,
+        animationName: 'petalFall',
+        animationTimingFunction: 'linear',
+        animationIterationCount: 'infinite',
       }}
       aria-hidden="true"
-    >
-      {['🌸', '🌺', '🌹', '🌼'][Math.floor(Math.random() * 4)]}
-    </div>
+    />
   );
 }
 
@@ -52,13 +52,13 @@ export default function FinalInvitation({ onReplay }) {
     setTimeout(() => setCalendarStatus(null), 3000);
   };
 
-  const petals = Array.from({ length: 12 }, (_, i) => ({
-    left: `${(i * 8.3) % 100}%`,
-    top: `-${Math.random() * 20}%`,
-    fontSize: `${1 + Math.random()}rem`,
-    animationDuration: `${8 + Math.random() * 6}s`,
-    animationDelay: `${i * 0.7}s`,
-  }));
+  const petals = useMemo(() => Array.from({ length: 12 }, (_, i) => ({
+    left: `${(i * 29 + 7) % 97}%`,
+    top: `-${(i * 11) % 22}%`,
+    transform: `scale(${0.72 + (i % 4) * 0.13}) rotate(${i * 31}deg)`,
+    animationDuration: `${8 + (i % 6) * 0.9}s`,
+    animationDelay: `${i * 0.62}s`,
+  })), []);
 
   return (
     <section
@@ -86,10 +86,10 @@ export default function FinalInvitation({ onReplay }) {
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
           viewport={{ once: true }}
           transition={{ type: 'spring', stiffness: 150, delay: 0.2 }}
-          className="text-5xl mb-4 select-none"
+          className="mb-4 select-none flex justify-center"
           aria-hidden="true"
         >
-          💖 S + G 💖
+          <div className="invitation-monogram" style={{ color: '#e4be69', borderColor: 'rgba(228,190,105,.72)' }}>S <i /> G</div>
         </motion.div>
 
         <motion.p
@@ -153,7 +153,7 @@ export default function FinalInvitation({ onReplay }) {
           <div className="absolute inset-4 rounded pointer-events-none" style={{ border: '1px solid rgba(255,215,0,0.2)' }} aria-hidden="true" />
           {/* Corner marks */}
           {['top-5 left-5', 'top-5 right-5', 'bottom-5 left-5', 'bottom-5 right-5'].map((pos) => (
-            <div key={pos} className={`absolute ${pos} text-lg`} style={{ color: '#FFD700', opacity: 0.6 }} aria-hidden="true">✦</div>
+            <div key={pos} className={`absolute ${pos} card-corner-detail card-corner-light`} style={{ opacity: 0.6 }} aria-hidden="true" />
           ))}
 
           <p className="tracking-[0.3em] text-[10px] md:text-xs mb-4 uppercase" style={{ color: 'rgba(255,215,0,0.7)' }}>
@@ -188,7 +188,7 @@ export default function FinalInvitation({ onReplay }) {
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded bg-gold-500/20 hover:bg-gold-500/30 border border-gold-500/50 text-gold-300 text-xs font-medium transition-all"
               >
-                <span>📍</span> Muhurtham Map Location <span>↗</span>
+                <MapPin size={14} strokeWidth={1.6} aria-hidden="true" /> Muhurtham Map Location <span>↗</span>
               </a>
             </div>
 
@@ -206,7 +206,7 @@ export default function FinalInvitation({ onReplay }) {
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded bg-gold-500/20 hover:bg-gold-500/30 border border-gold-500/50 text-gold-300 text-xs font-medium transition-all"
               >
-                <span>📍</span> Reception Map Location <span>↗</span>
+                <MapPin size={14} strokeWidth={1.6} aria-hidden="true" /> Reception Map Location <span>↗</span>
               </a>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function FinalInvitation({ onReplay }) {
             onClick={handleShare}
             variant="primary"
             ariaLabel="Share this wedding invitation"
-            icon={shareStatus === 'copied' ? '✓' : shareStatus === 'shared' ? '✓' : '📤'}
+            icon={shareStatus === 'copied' || shareStatus === 'shared' ? '✓' : <Share2 size={16} strokeWidth={1.6} />}
           >
             {shareStatus === 'copied' ? 'Link Copied!' : shareStatus === 'shared' ? 'Shared!' : 'Share Invitation'}
           </GoldButton>
@@ -235,7 +235,7 @@ export default function FinalInvitation({ onReplay }) {
             onClick={handleCalendar}
             variant="outline"
             ariaLabel="Add wedding to calendar"
-            icon={calendarStatus === 'downloaded' ? '✓' : '📅'}
+            icon={calendarStatus === 'downloaded' ? '✓' : <CalendarPlus size={16} strokeWidth={1.6} />}
           >
             {calendarStatus === 'downloaded' ? 'Calendar Added!' : 'Add to Calendar'}
           </GoldButton>
@@ -245,7 +245,7 @@ export default function FinalInvitation({ onReplay }) {
             onClick={onReplay}
             variant="ghost"
             ariaLabel="Replay the opening animation"
-            icon="↩"
+            icon={<RotateCcw size={16} strokeWidth={1.6} />}
           >
             Replay Opening
           </GoldButton>
@@ -273,10 +273,10 @@ export default function FinalInvitation({ onReplay }) {
           className="mt-12 text-sm text-champagne/80 font-body space-y-1"
         >
           <p className="text-gold-400 font-medium">{wedding.groomFamily}</p>
-          <div className="my-1 text-gold-500 text-base">♥</div>
+          <div className="my-2 mx-auto w-16 h-px bg-gradient-to-r from-transparent via-gold-500 to-transparent" />
           <p className="text-gold-400 font-medium">{wedding.brideFamily}</p>
           <p className="mt-3 text-xs tracking-wider text-champagne/70 italic">
-            ✦ {wedding.compliments} ✦
+            {wedding.compliments}
           </p>
         </motion.div>
 

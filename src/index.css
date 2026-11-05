@@ -420,3 +420,86 @@ canvas {
   .tap-mark i { animation: none; }
   .opening-backdrop { transition: none !important; }
 }
+
+.invitation-monogram {
+  width: 4.2rem;
+  height: 4.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .32rem;
+  border: 1px solid rgba(139, 83, 24, .72);
+  border-radius: 50%;
+  color: #8e581c;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 3px rgba(174, 115, 41, .12), 0 3px 10px rgba(91, 45, 14, .16);
+}
+.invitation-monogram i {
+  width: 1px;
+  height: 1.5rem;
+  background: #b77d31;
+  transform: rotate(25deg);
+}
+.card-corner-detail {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-top: 2px solid #a76d26;
+  border-left: 2px solid #a76d26;
+  filter: drop-shadow(0 1px 0 rgba(255, 239, 187, .8));
+}
+.card-corner-detail.top-4.right-4 { transform: rotate(90deg); }
+.card-corner-detail.bottom-4.right-4 { transform: rotate(180deg); }
+.card-corner-detail.bottom-4.left-4 { transform: rotate(270deg); }
+.card-corner-light { border-color: #e6bb62; }
+
+@media (max-height: 760px) {
+  #invitation { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+  #invitation > div:first-child { margin-bottom: 1rem; }
+  #invitation h2 { font-size: 2.15rem; }
+}
+
+.portrait-monogram {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  color: #e8c66f;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(212, 160, 23, .18), transparent 31%),
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 10px, rgba(212, 160, 23, .07) 11px 12px),
+    linear-gradient(145deg, #38100c, #100302);
+  font-family: 'Cormorant Garamond', serif;
+  text-shadow: 0 3px 18px #000;
+}
+.portrait-monogram span { font-size: 4.8rem; line-height: .82; font-weight: 500; }
+.portrait-monogram small { margin-top: .6rem; font-size: .48rem; letter-spacing: .38em; color: rgba(232, 198, 111, .62); }
+.mini-lotus {
+  position: relative;
+  width: 1.1rem;
+  height: .8rem;
+  display: inline-block;
+  border: 1px solid #d8a743;
+  border-radius: 50% 50% 48% 48%;
+}
+.mini-lotus::before,
+.mini-lotus::after {
+  content: '';
+  position: absolute;
+  width: .65rem;
+  height: .65rem;
+  bottom: -.05rem;
+  border: 1px solid #d8a743;
+  border-radius: 50% 50% 60% 40%;
+}
+.mini-lotus::before { left: -.38rem; transform: rotate(-34deg); }
+.mini-lotus::after { right: -.38rem; transform: rotate(34deg) scaleX(-1); }
+
+.final-petal {
+  width: .7rem;
+  height: 1.25rem;
+  border-radius: 75% 20% 70% 25%;
+  background: linear-gradient(145deg, #c90f3d, #73001f);
+  box-shadow: inset 1px 1px 2px rgba(255, 190, 190, .48), 0 2px 5px rgba(0, 0, 0, .24);
+}

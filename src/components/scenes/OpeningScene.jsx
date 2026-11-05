@@ -83,6 +83,7 @@ export default function OpeningScene({ onEnter }) {
   const { supported, checked } = useWebGL();
   const reducedMotion = useReducedMotion();
   const containerRef = useRef(null);
+  const gestureStartRef = useRef(null);
 
   const handleOpen = useCallback(() => {
     if (phase !== 'intro') return;
@@ -103,18 +104,17 @@ export default function OpeningScene({ onEnter }) {
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return undefined;
-    let start = null;
-
     const onPointerDown = (event) => {
       if (event.pointerType === 'mouse') return;
-      start = { x: event.clientX, y: event.clientY, time: performance.now() };
+      gestureStartRef.current = { x: event.clientX, y: event.clientY, time: performance.now() };
     };
     const onPointerUp = (event) => {
+      const start = gestureStartRef.current;
       if (!start) return;
       const dx = event.clientX - start.x;
       const dy = event.clientY - start.y;
       if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.25 && performance.now() - start.time < 750) handleOpen();
-      start = null;
+      gestureStartRef.current = null;
     };
 
     element.addEventListener('pointerdown', onPointerDown, { passive: true });
@@ -138,7 +138,7 @@ export default function OpeningScene({ onEnter }) {
       aria-label="Interactive royal palace entrance for the wedding invitation"
     >
       <motion.img
-        src="/assets/palace-mandapam-portrait.png"
+        src="/assets/palace-mandapam-portrait.jpg"
         alt="Illuminated South Indian wedding mandapam framed by a flower-covered palace arch"
         className="opening-backdrop"
         initial={false}

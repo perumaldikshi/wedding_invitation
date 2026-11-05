@@ -190,7 +190,7 @@ function ArchCrown() {
 }
 
 export default function RoyalDoors({ open = false, onOpenComplete }) {
-  const sourceTexture = useTexture('/assets/ornate-gold-door-panel.png');
+  const sourceTexture = useTexture('/assets/ornate-gold-door-panel.jpg');
   const completedRef = useRef(false);
 
   useEffect(() => {

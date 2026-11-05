@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
-  { id: 'opening', label: 'Welcome', icon: '✦' },
-  { id: 'couple', label: 'Couple', icon: '♥' },
-  { id: 'invitation', label: 'Invitation', icon: '💌' },
-  { id: 'story', label: 'Story', icon: '📖' },
-  { id: 'events', label: 'Events', icon: '🌸' },
-  { id: 'countdown', label: 'Countdown', icon: '⏳' },
-  { id: 'final', label: 'Blessings', icon: '🙏' },
+  { id: 'opening', label: 'Welcome' },
+  { id: 'couple', label: 'Couple' },
+  { id: 'invitation', label: 'Invitation' },
+  { id: 'story', label: 'Story' },
+  { id: 'events', label: 'Events' },
+  { id: 'countdown', label: 'Countdown' },
+  { id: 'final', label: 'Blessings' },
 ];
 
 export default function FloatingNav({ currentScene = 0 }) {
@@ -86,7 +86,7 @@ export default function FloatingNav({ currentScene = 0 }) {
                       }}
                       role="menuitem"
                     >
-                      <span aria-hidden="true">{item.icon}</span>
+                      <span className="w-1.5 h-1.5 rounded-full border border-current" aria-hidden="true" />
                       {item.label}
                       {currentScene === i && (
                         <span className="ml-auto text-xs" style={{ color: '#FFD700' }}>✦</span>

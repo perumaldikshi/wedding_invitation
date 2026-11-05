@@ -82,10 +82,13 @@ export default function Countdown() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-5xl mb-6"
+          className="mb-6 flex justify-center"
           aria-hidden="true"
         >
-          ⏳
+          <svg width="54" height="64" viewBox="0 0 54 64" fill="none" stroke="#d4a747" strokeWidth="1.5">
+            <path d="M10 6h34M10 58h34M15 7c0 13 5 18 12 25-7 7-12 12-12 25M39 7c0 13-5 18-12 25 7 7 12 12 12 25" />
+            <path d="M18 16h18M19 49h16l-8-8-8 8Z" fill="rgba(212,167,71,.18)" />
+          </svg>
         </motion.div>
 
         <motion.p
@@ -126,7 +129,7 @@ export default function Countdown() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center"
           >
-            <div className="text-6xl mb-4" aria-hidden="true">🎊</div>
+            <div className="invitation-monogram mx-auto mb-4" aria-hidden="true">S <i /> G</div>
             <h3
               className="font-display text-3xl md:text-4xl mb-3"
               style={{ color: '#FFD700' }}

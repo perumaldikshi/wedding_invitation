@@ -1,13 +1,21 @@
 import { motion } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import OrnamentalDivider from '../ui/OrnamentalDivider';
 import wedding from '../../config/wedding';
 
-const EVENT_ICONS = {
-  rings: '💍',
-  music: '🎵',
-  star: '⭐',
-  sparkle: '✨',
-};
+function EventMark({ reception = false }) {
+  return reception ? (
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.25" aria-hidden="true">
+      <path d="M5 25h22M8 25V13h16v12M10 13c2-5 10-8 12 0M16 4v6M13 7h6" />
+      <path d="M11 18h10M12 21h8" opacity=".75" />
+    </svg>
+  ) : (
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.25" aria-hidden="true">
+      <path d="M16 27c-4-4-7-10 0-20 7 10 4 16 0 20ZM14 27C8 25 5 20 6 13c7 4 9 9 8 14ZM18 27c6-2 9-7 8-14-7 4-9 9-8 14Z" />
+      <path d="M7 28h18" />
+    </svg>
+  );
+}
 
 const EVENT_COLORS = {
   engagement: { bg: '#1a0505', border: '#D4A017', accent: '#FFD700' },
@@ -44,7 +52,7 @@ function EventCard({ event, index }) {
             style={{ background: `${colors.accent}20`, border: `1px solid ${colors.accent}40` }}
             aria-hidden="true"
           >
-            {EVENT_ICONS[event.icon] || '✦'}
+            <EventMark reception={event.id === 'reception'} />
           </div>
           <div>
             <h3 className="font-display text-2xl md:text-3xl font-semibold" style={{ color: colors.accent }}>
@@ -109,7 +117,7 @@ function EventCard({ event, index }) {
               boxShadow: `0 4px 15px rgba(0,0,0,0.3)`
             }}
           >
-            <span>📍</span>
+            <MapPin size={15} strokeWidth={1.7} aria-hidden="true" />
             <span>View {event.id === 'wedding' ? 'Muhurtham' : 'Reception'} Location</span>
             <span className="text-xs opacity-75">↗</span>
           </a>

@@ -2,6 +2,7 @@ import { Suspense, useRef, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera, OrbitControls, Html } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import MandapamScene from '../three/MandapamScene';
 import GoldenParticles from '../three/GoldenParticles';
 import WebGLFallback from '../three/WebGLFallback';
@@ -206,7 +207,9 @@ export default function VenueScene() {
         ) : (
           <WebGLFallback className="w-full h-full">
             <div className="text-center px-8">
-              <div className="text-5xl mb-4" aria-hidden="true">🏛️</div>
+              <svg className="mx-auto mb-4" width="54" height="54" viewBox="0 0 54 54" fill="none" stroke="#d4a747" strokeWidth="1.4" aria-hidden="true">
+                <path d="M7 46h40M11 46V23h32v23M8 23h38L27 8 8 23ZM17 27v15M27 27v15M37 27v15" />
+              </svg>
               <p className="font-display text-2xl" style={{ color: '#FFD700' }}>Wedding Mandapam</p>
             </div>
           </WebGLFallback>
@@ -261,7 +264,9 @@ export default function VenueScene() {
             <div key={pos} className={`absolute ${pos} text-sm select-none`} style={{ color: '#D4A017', opacity: 0.5 }} aria-hidden="true">✦</div>
           ))}
 
-          <div className="text-4xl mb-3 select-none" aria-hidden="true">🏛️</div>
+          <svg className="mx-auto mb-3" width="42" height="42" viewBox="0 0 42 42" fill="none" stroke="#d4a747" strokeWidth="1.25" aria-hidden="true">
+            <path d="M5 36h32M8 36V18h26v18M6 18h30L21 7 6 18ZM13 21v12M21 21v12M29 21v12" />
+          </svg>
           <h3 className="font-display text-2xl md:text-3xl mb-2" style={{ color: '#FFD700' }}>
             {wedding.venueName}
           </h3>
@@ -275,7 +280,7 @@ export default function VenueScene() {
           <GoldButton
             onClick={handleDirections}
             ariaLabel={`Get Google Maps directions to ${wedding.venueName}`}
-            icon="📍"
+            icon={<MapPin size={16} strokeWidth={1.6} />}
           >
             Get Directions
           </GoldButton>
