@@ -45,6 +45,7 @@ function SceneFallback() {
 
 export default function App() {
   const [loading, setLoading] = useState(() => !new URLSearchParams(window.location.search).has('qa'));
+  const [openingReady, setOpeningReady] = useState(false);
   const [entered, setEntered] = useState(false);
   const [currentScene, setCurrentScene] = useState(0);
   const [petalActive, setPetalActive] = useState(false);
@@ -52,7 +53,9 @@ export default function App() {
   const { preferences, updatePreference } = useWeddingPreferences();
   useScrollAnimations(loading);
 
-  const audio = useAudio(wedding.backgroundMusic);
+  // Give the opening artwork and 3D doors the network priority while the
+  // loader is visible. Music starts loading once the entrance is ready.
+  const audio = useAudio(wedding.backgroundMusic, { enabled: !loading });
 
   const handleMusicChange = useCallback((enabled) => {
     updatePreference('music', enabled);
@@ -107,14 +110,20 @@ export default function App() {
     }, 500);
   }, []);
 
-  if (loading) {
-    return <LoadingScreen onComplete={() => setLoading(false)} />;
-  }
+  const handleOpeningReady = useCallback(() => setOpeningReady(true), []);
+  const handleLoadingComplete = useCallback(() => setLoading(false), []);
 
   return (
     <div
       className="wedding-journal"
     >
+      {loading && (
+        <LoadingScreen
+          ready={openingReady}
+          onComplete={handleLoadingComplete}
+        />
+      )}
+
       {/* Interactive flower petal canvas */}
       {!reducedMotion && preferences.petalEffects && (
         <PetalCanvas
@@ -156,39 +165,44 @@ export default function App() {
         <Suspense fallback={<SceneFallback />}>
           <OpeningScene
             onEnter={handleEnter}
+            onReady={handleOpeningReady}
             quality={preferences.quality}
           />
         </Suspense>
 
-        {/* Scene 2: Couple Reveal */}
-        <Suspense fallback={<SceneFallback />}>
-          <CoupleReveal />
-        </Suspense>
+        {!loading && (
+          <>
+            {/* Scene 2: Couple Reveal */}
+            <Suspense fallback={<SceneFallback />}>
+              <CoupleReveal />
+            </Suspense>
 
-        {/* Scene 3: Interactive 3D Invitation Card */}
-        <Suspense fallback={<SceneFallback />}>
-          <InvitationCard />
-        </Suspense>
+            {/* Scene 3: Interactive 3D Invitation Card */}
+            <Suspense fallback={<SceneFallback />}>
+              <InvitationCard />
+            </Suspense>
 
-        {/* Scene 4: Our Story Carousel */}
-        <Suspense fallback={<SceneFallback />}>
-          <OurStory />
-        </Suspense>
+            {/* Scene 4: Our Story Carousel */}
+            <Suspense fallback={<SceneFallback />}>
+              <OurStory />
+            </Suspense>
 
-        {/* Scene 5: Wedding Events */}
-        <Suspense fallback={<SceneFallback />}>
-          <WeddingEvents />
-        </Suspense>
+            {/* Scene 5: Wedding Events */}
+            <Suspense fallback={<SceneFallback />}>
+              <WeddingEvents />
+            </Suspense>
 
-        {/* Scene 6: Live Countdown */}
-        <Suspense fallback={<SceneFallback />}>
-          <Countdown />
-        </Suspense>
+            {/* Scene 6: Live Countdown */}
+            <Suspense fallback={<SceneFallback />}>
+              <Countdown />
+            </Suspense>
 
-        {/* Scene 7: Final Invitation & Blessings */}
-        <Suspense fallback={<SceneFallback />}>
-          <FinalInvitation onReplay={handleReplay} />
-        </Suspense>
+            {/* Scene 7: Final Invitation & Blessings */}
+            <Suspense fallback={<SceneFallback />}>
+              <FinalInvitation onReplay={handleReplay} />
+            </Suspense>
+          </>
+        )}
       </main>
     </div>
   );

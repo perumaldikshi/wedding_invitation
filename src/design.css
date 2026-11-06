@@ -50,10 +50,6 @@ body { background: #171b18; }
 .wedding-journal .opening-title em { flex-basis: auto; font-size: .6em; margin: 0; color: #dfbc7f; }
 .wedding-journal .opening-tamil { font-size: 13px; margin-top: 16px; }
 .wedding-journal .opening-date { font: 500 10px/1.6 Arial, sans-serif; letter-spacing: .16em; }
-.wedding-journal .door-open-button { border-radius: 3px; min-height: 58px; background: #f5efdf; color: #5b362b; border-color: #ddc8a1; box-shadow: 0 8px 35px #0000003b; }
-.wedding-journal .door-open-button strong { color: #5b362b; text-shadow: none; font-size: 22px; }
-.wedding-journal .door-open-button small { color: #856a4e; text-shadow: none; }
-.wedding-journal .tap-mark i { border-color: #a27c4e; }
 .wedding-journal .opening-action > p { font-size: 9px; letter-spacing: .12em; }
 /* A cinematic portrait spread, with room for the families. */
 .journal-couple { padding: 85px max(32px, calc((100vw - 1240px) / 2)) 130px; color: #f4ead8; background: #2e3630; }

@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export function useAudio(src) {
+export function useAudio(src, { enabled = true } = {}) {
   const audioRef = useRef(null);
   const wantedRef = useRef(true);
   const startRef = useRef(() => Promise.resolve(false));
   const [state, setState] = useState({ playing: false, muted: false, ready: false, blocked: false, error: null });
 
   useEffect(() => {
+    if (!enabled) return undefined;
+
     const audio = new Audio(src);
     audioRef.current = audio;
     audio.dataset.weddingAudio = 'true';
@@ -72,7 +74,7 @@ export function useAudio(src) {
       audio.remove();
       if (audioRef.current === audio) audioRef.current = null;
     };
-  }, [src]);
+  }, [enabled, src]);
 
   const play = useCallback(() => {
     wantedRef.current = true;

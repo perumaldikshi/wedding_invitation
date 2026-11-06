@@ -48,7 +48,22 @@ function StudioEnvironment() {
   );
 }
 
-function Scene3D({ open, quality }) {
+function SceneReady({ onReady }) {
+  useEffect(() => {
+    let secondFrame;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => onReady?.());
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame) window.cancelAnimationFrame(secondFrame);
+    };
+  }, [onReady]);
+
+  return null;
+}
+
+function Scene3D({ open, quality, onReady }) {
   const particleCount = quality === 'low' ? 65 : quality === 'high' ? 220 : 130;
   const shadowSize = quality === 'high' ? 2048 : quality === 'medium' ? 1024 : 512;
   return (
@@ -63,6 +78,7 @@ function Scene3D({ open, quality }) {
       <StudioEnvironment />
       <GoldenParticles count={particleCount} spread={8} speed={0.22} />
       <RoyalDoors open={open} />
+      <SceneReady onReady={onReady} />
       {quality !== 'low' && <ContactShadows position={[0, -1.57, 0.5]} opacity={0.7} scale={10} blur={2.8} far={5.5} color="#160600" />}
       <fog attach="fog" args={['#160806', 14, 32]} />
     </>
@@ -79,9 +95,12 @@ function MonogramSeal() {
   );
 }
 
-export default function OpeningScene({ onEnter, quality = 'medium' }) {
+export default function OpeningScene({ onEnter, onReady, quality = 'medium' }) {
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState('intro');
+  const [backdropReady, setBackdropReady] = useState(false);
+  const [doorReady, setDoorReady] = useState(false);
+  const readyReportedRef = useRef(false);
   const { supported, checked } = useWebGL();
   const reducedMotion = useReducedMotion();
   const containerRef = useRef(null);
@@ -95,6 +114,19 @@ export default function OpeningScene({ onEnter, quality = 'medium' }) {
       try { navigator.vibrate([18, 35, 18]); } catch { /* vibration is optional */ }
     }
   }, [phase]);
+
+  const handleDoorReady = useCallback(() => setDoorReady(true), []);
+
+  useEffect(() => {
+    const staticMode = !supported || reducedMotion;
+    if (!checked || !backdropReady || (!staticMode && !doorReady) || readyReportedRef.current) return undefined;
+
+    const frame = window.requestAnimationFrame(() => {
+      readyReportedRef.current = true;
+      onReady?.();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [backdropReady, checked, doorReady, onReady, reducedMotion, supported]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -160,6 +192,8 @@ export default function OpeningScene({ onEnter, quality = 'medium' }) {
           loading="eager"
           fetchPriority="high"
           decoding="async"
+          onLoad={() => setBackdropReady(true)}
+          onError={() => setBackdropReady(true)}
         />
       </picture>
 
@@ -209,6 +243,7 @@ export default function OpeningScene({ onEnter, quality = 'medium' }) {
               <Scene3D
                 open={open}
                 quality={effectiveQuality}
+                onReady={handleDoorReady}
               />
             </Suspense>
           </Canvas>
@@ -259,8 +294,15 @@ export default function OpeningScene({ onEnter, quality = 'medium' }) {
                 onClick={(event) => { event.stopPropagation(); handleOpen(); }}
                 aria-label="Open the palace doors and enter the wedding invitation"
               >
-                <span className="tap-mark" aria-hidden="true"><i /><i /><i /></span>
-                <span><strong>Tap to Open</strong><small>a beautiful beginning awaits</small></span>
+                <span className="door-button-seal" aria-hidden="true">
+                  <i />
+                  <b>S<span>·</span>G</b>
+                </span>
+                <span className="door-button-label">
+                  <small>Begin the celebration</small>
+                  <strong>Open Our Invitation</strong>
+                </span>
+                <span className="door-button-arrow" aria-hidden="true"><i /></span>
               </button>
               <p>Tap the gates or swipe sideways</p>
             </motion.div>
