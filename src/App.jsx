@@ -56,7 +56,7 @@ export default function App() {
 
   // Give the opening artwork and 3D doors the network priority while the
   // loader is visible. Music starts loading once the entrance is ready.
-  const audio = useAudio(wedding.backgroundMusic, { enabled: !loading, autoStart: false });
+  const audio = useAudio(wedding.backgroundMusic, { enabled: !loading, autoStart: true });
 
   const handleMusicChange = useCallback((enabled) => {
     updatePreference('music', enabled);

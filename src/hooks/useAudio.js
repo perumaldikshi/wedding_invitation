@@ -19,9 +19,13 @@ export function useAudio(src, { enabled = true, autoStart = true } = {}) {
     audio.autoplay = autoStart;
     document.body.appendChild(audio);
     const session = { disposed: false };
+    let lastScrollAttempt = 0;
     const update = patch => { if (!session.disposed) setState(previous => ({ ...previous, ...patch })); };
     const detachUnlock = () => {
       window.removeEventListener('pointerdown', unlock, true);
+      window.removeEventListener('touchstart', unlock, true);
+      window.removeEventListener('wheel', unlock, true);
+      window.removeEventListener('scroll', unlock, true);
       window.removeEventListener('keydown', unlock, true);
     };
     const attempt = async () => {
@@ -40,6 +44,11 @@ export function useAudio(src, { enabled = true, autoStart = true } = {}) {
     };
     function unlock(event) {
       if (event.target?.closest?.('[data-audio-control]') || !wantedRef.current || event.repeat) return;
+      if (event.type === 'scroll') {
+        const now = performance.now();
+        if (now - lastScrollAttempt < 750) return;
+        lastScrollAttempt = now;
+      }
       void attempt();
     }
     const onPlaying = () => {
@@ -57,6 +66,9 @@ export function useAudio(src, { enabled = true, autoStart = true } = {}) {
     audio.addEventListener('volumechange', onVolume);
     audio.addEventListener('error', onError);
     window.addEventListener('pointerdown', unlock, true);
+    window.addEventListener('touchstart', unlock, { capture: true, passive: true });
+    window.addEventListener('wheel', unlock, { capture: true, passive: true });
+    window.addEventListener('scroll', unlock, { capture: true, passive: true });
     window.addEventListener('keydown', unlock, true);
     startRef.current = attempt;
     if (autoStart) void attempt();
