@@ -12,7 +12,8 @@ import wedding from './config/wedding';
 
 // Lazy-load heavy scenes
 const OpeningScene = lazy(() => import('./components/scenes/OpeningScene'));
-const CoupleReveal = lazy(() => import('./components/scenes/CoupleReveal'));
+// The "01 / THE TWO OF US" section is intentionally hidden.
+// const CoupleReveal = lazy(() => import('./components/scenes/CoupleReveal'));
 const InvitationCard = lazy(() => import('./components/scenes/InvitationCard'));
 const OurStory = lazy(() => import('./components/scenes/OurStory'));
 const WeddingEvents = lazy(() => import('./components/scenes/WeddingEvents'));
@@ -55,7 +56,7 @@ export default function App() {
 
   // Give the opening artwork and 3D doors the network priority while the
   // loader is visible. Music starts loading once the entrance is ready.
-  const audio = useAudio(wedding.backgroundMusic, { enabled: !loading });
+  const audio = useAudio(wedding.backgroundMusic, { enabled: !loading, autoStart: false });
 
   const handleMusicChange = useCallback((enabled) => {
     updatePreference('music', enabled);
@@ -66,7 +67,7 @@ export default function App() {
   useEffect(() => {
     if (loading) return undefined;
     let frame;
-    const ids = ['opening', 'couple', 'invitation', 'story', 'events', 'countdown', 'final'];
+    const ids = ['opening', 'invitation', 'story', 'events', 'countdown', 'final'];
     const track = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
@@ -94,14 +95,19 @@ export default function App() {
 
   const handleEnter = useCallback(() => {
     setEntered(true);
-    // Smooth scroll down to couple reveal after opening animation completes
+    // Continue directly to the invitation while the couple section is hidden.
     setTimeout(() => {
-      const coupleEl = document.getElementById('couple');
-      if (coupleEl) {
-        coupleEl.scrollIntoView({ behavior: 'smooth' });
+      const invitationEl = document.getElementById('invitation');
+      if (invitationEl) {
+        invitationEl.scrollIntoView({ behavior: 'smooth' });
       }
     }, 400);
   }, []);
+
+  const handleDoorOpen = useCallback(() => {
+    updatePreference('music', true);
+    void audio.play();
+  }, [audio, updatePreference]);
 
   const handleReplay = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -154,7 +160,7 @@ export default function App() {
 
       {/* Skip to main content accessibility link */}
       <a
-        href="#couple"
+        href="#invitation"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 focus:z-50 focus:px-4 focus:py-2 focus:bg-gold-500 focus:text-palace-bg focus:font-display focus:rounded"
       >
         Skip to main content
@@ -165,6 +171,7 @@ export default function App() {
         <Suspense fallback={<SceneFallback />}>
           <OpeningScene
             onEnter={handleEnter}
+            onDoorOpen={handleDoorOpen}
             onReady={handleOpeningReady}
             quality={preferences.quality}
           />
@@ -172,10 +179,11 @@ export default function App() {
 
         {!loading && (
           <>
-            {/* Scene 2: Couple Reveal */}
+            {/* Scene 2: "01 / THE TWO OF US" is intentionally hidden.
             <Suspense fallback={<SceneFallback />}>
               <CoupleReveal />
             </Suspense>
+            */}
 
             {/* Scene 3: Interactive 3D Invitation Card */}
             <Suspense fallback={<SceneFallback />}>

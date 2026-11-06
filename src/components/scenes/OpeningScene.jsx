@@ -95,7 +95,7 @@ function MonogramSeal() {
   );
 }
 
-export default function OpeningScene({ onEnter, onReady, quality = 'medium' }) {
+export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = 'medium' }) {
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState('intro');
   const [backdropReady, setBackdropReady] = useState(false);
@@ -108,12 +108,14 @@ export default function OpeningScene({ onEnter, onReady, quality = 'medium' }) {
 
   const handleOpen = useCallback(() => {
     if (phase !== 'intro') return;
+    // Keep playback inside the visitor's door gesture so mobile browsers allow it.
+    onDoorOpen?.();
     setPhase('opening');
     setOpen(true);
     if (navigator.vibrate) {
       try { navigator.vibrate([18, 35, 18]); } catch { /* vibration is optional */ }
     }
-  }, [phase]);
+  }, [onDoorOpen, phase]);
 
   const handleDoorReady = useCallback(() => setDoorReady(true), []);
 
@@ -328,7 +330,7 @@ export default function OpeningScene({ onEnter, onReady, quality = 'medium' }) {
               <p className="opening-reveal-wedding-date">{wedding.muhurthamDate}</p>
               <p className="opening-reveal-location">Mailam, Tamil Nadu</p>
             </div>
-            <a className="opening-reveal-explore" href="#couple">Explore our invitation <span aria-hidden="true">&#8595;</span></a>
+            <a className="opening-reveal-explore" href="#invitation">Explore our invitation <span aria-hidden="true">&#8595;</span></a>
           </motion.div>
         )}
       </div>

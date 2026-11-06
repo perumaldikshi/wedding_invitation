@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sridhar and Gowri Wedding//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:sridhar-gowri-wedding-20261113@wedding-invitation
+DTSTAMP:20261106T000000Z
+DTSTART:20261113T003000Z
+DTEND:20261113T160000Z
+SUMMARY:V. Sridhar & R. Gowri Wedding
+DESCRIPTION:Wedding Muhurtham: 6:00 AM - 7:30 AM at Sri Subramaniya Swamy Sannithi\, Mailam. Reception: 6:30 PM onwards at Kasiyammal Thirumana Mandapam\, Pondy Road\, Mailam.
+LOCATION:Sri Subramaniya Swamy Sannithi & Kasiyammal Thirumana Mandapam\, Mailam\, Tamil Nadu
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR

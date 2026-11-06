@@ -163,9 +163,9 @@ body { background: #171b18; }
 .finale-content h2 em { font-weight: 400; }
 .finale-content > p:not(.journal-kicker):not(.finale-status) { margin: 30px 0; color: #d9dfcd; font-size: 19px; line-height: 1.7; }
 .finale-actions { max-width: 380px; display: flex; flex-direction: column; gap: 10px; }
-.finale-actions button { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; padding: 16px 18px; border: 1px solid #c9cbb1; background: #f1eddb; color: #344b3a; cursor: pointer; font: 17px/1.4 'EB Garamond', Georgia, serif; }
-.finale-actions button + button { background: transparent; color: #f1eddb; }
-.finale-actions button > span { display: flex; align-items: center; gap: 12px; }
+.finale-actions button, .finale-actions a { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; padding: 16px 18px; border: 1px solid #c9cbb1; background: #f1eddb; color: #344b3a; cursor: pointer; font: 17px/1.4 'EB Garamond', Georgia, serif; text-decoration: none; }
+.finale-actions a { background: transparent; color: #f1eddb; }
+.finale-actions button > span, .finale-actions a > span { display: flex; align-items: center; gap: 12px; }
 .finale-status { min-height: 24px; color: #e9dbbb; font-size: 14px; margin: 12px 0 20px; }
 .finale-signature { display: block; margin-top: 15px; color: #e4c9a4; font: 32px/1.4 'Dancing Script', cursive; }
 .journal-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 25px; margin: 0 max(32px, calc((100vw - 1240px) / 2)); padding: 30px 0 95px; border-top: 1px solid #a3ac904f; color: #e9dfc7; }

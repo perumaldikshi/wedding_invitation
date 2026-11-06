@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export function useAudio(src, { enabled = true } = {}) {
+export function useAudio(src, { enabled = true, autoStart = true } = {}) {
   const audioRef = useRef(null);
-  const wantedRef = useRef(true);
+  const wantedRef = useRef(autoStart);
   const startRef = useRef(() => Promise.resolve(false));
   const [state, setState] = useState({ playing: false, muted: false, ready: false, blocked: false, error: null });
 
@@ -16,7 +16,7 @@ export function useAudio(src, { enabled = true } = {}) {
     audio.loop = true;
     audio.volume = 0.4;
     audio.preload = 'auto';
-    audio.autoplay = true;
+    audio.autoplay = autoStart;
     document.body.appendChild(audio);
     const session = { disposed: false };
     const update = patch => { if (!session.disposed) setState(previous => ({ ...previous, ...patch })); };
@@ -59,7 +59,7 @@ export function useAudio(src, { enabled = true } = {}) {
     window.addEventListener('pointerdown', unlock, true);
     window.addEventListener('keydown', unlock, true);
     startRef.current = attempt;
-    void attempt();
+    if (autoStart) void attempt();
     return () => {
       session.disposed = true;
       detachUnlock();
@@ -74,7 +74,7 @@ export function useAudio(src, { enabled = true } = {}) {
       audio.remove();
       if (audioRef.current === audio) audioRef.current = null;
     };
-  }, [enabled, src]);
+  }, [autoStart, enabled, src]);
 
   const play = useCallback(() => {
     wantedRef.current = true;
