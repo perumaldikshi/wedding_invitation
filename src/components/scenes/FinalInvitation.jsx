@@ -8,7 +8,7 @@ export default function FinalInvitation({ onReplay }) {
   const [message, setMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const share = async () => {
-    const result = await shareInvitation({ title: wedding.shareTitle, text: wedding.shareText, url: window.location.href });
+    const result = await shareInvitation({ title: wedding.shareTitle, text: wedding.shareText, url: wedding.shareUrl });
     setCopied(result.success);
     setMessage(result.success ? (result.method === 'clipboard' ? 'Invitation link copied.' : 'Invitation shared.') : result.method === 'cancelled' ? '' : 'Could not share. Please copy the page link.');
   };

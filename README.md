@@ -11,6 +11,16 @@ npm run dev
 
 Build with `npm run build`; serve the production build with `npm run preview`. Run `npm run lint` for static checks.
 
+## Deploy to Vercel
+
+The repository includes `vercel.json` with the Vite build command, `dist` output directory and SPA fallback configured.
+
+1. Push the repository to GitHub, GitLab or Bitbucket.
+2. Import that repository in Vercel.
+3. Keep the detected project settings and select **Deploy**.
+
+For a CLI deployment, run `npx vercel` from the project root. Use `npx vercel --prod` when the preview is ready to publish.
+
 ## The experience
 
 - A Three.js palace entrance opens into the illustrated couple reveal.
