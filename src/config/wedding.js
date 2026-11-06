@@ -14,11 +14,11 @@ export const wedding = {
   brideDegree: 'B.Com.,',
   brideNameTamil: 'ஆர். கௌரி',
 
-  groomParents: 'R. Vishvanathan – Jayanthi',
-  groomParentsTamil: 'ஆர். விஸ்வநாதன் – ஜெயந்தி',
+  groomParents: 'R. Vishvanathan – Janaki',
+  groomParentsTamil: 'ஆர். விஸ்வநாதன் – ஜானகி',
   groomNative: 'Parikkalpattu, Vanur T.K.',
   groomNativeTamil: 'பரிக்கல்பட்டு, வானூர் வட்டம்',
-  groomFamily: 'S/o. R. Vishvanathan – Jayanthi, Parikkalpattu, Vanur T.K.',
+  groomFamily: 'S/o. R. Vishvanathan – Janaki, Parikkalpattu, Vanur T.K.',
 
   brideParents: 'K. Rajendran – Thangam',
   brideParentsTamil: 'கே. ராஜேந்திரன் – தங்கம்',
