@@ -451,6 +451,164 @@ canvas {
   text-shadow: 0 2px 8px #000;
 }
 
+/* A ceremonial seal makes the whole doorway's tap interaction unmistakable. */
+.door-entry-seal {
+  position: relative;
+  isolation: isolate;
+  width: 7.5rem;
+  height: 7.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffe7aa;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, .72));
+  transition: transform .25s ease, filter .25s ease;
+}
+
+.door-entry-seal::before,
+.door-entry-seal::after {
+  content: '';
+  position: absolute;
+  inset: .05rem;
+  z-index: 0;
+  border: 1px solid rgba(255, 222, 141, .54);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.door-entry-seal::after {
+  inset: .45rem;
+  border-style: dotted;
+  border-color: rgba(255, 222, 141, .38);
+  animation: doorSealOrbit 18s linear infinite;
+}
+
+.door-entry-seal:hover {
+  transform: translateY(-3px) scale(1.035);
+  filter: drop-shadow(0 15px 24px rgba(0, 0, 0, .78)) drop-shadow(0 0 16px rgba(239, 181, 68, .35));
+}
+.door-entry-seal:active { transform: scale(.94); }
+.door-entry-seal:focus-visible { outline: 2px solid #ffe39b; outline-offset: 7px; }
+
+.door-entry-medallion {
+  position: relative;
+  z-index: 2;
+  width: 6.35rem;
+  height: 6.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e8b957;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 25%, rgba(255, 218, 137, .23), transparent 21%),
+    repeating-radial-gradient(circle, transparent 0 7px, rgba(255, 218, 137, .055) 8px 9px),
+    radial-gradient(circle, #9f2736 0%, #691223 61%, #32070f 100%);
+  box-shadow: inset 0 0 0 3px #641122, inset 0 0 0 4px rgba(255, 221, 140, .54), inset 0 -16px 22px rgba(22, 1, 5, .38), 0 0 0 4px rgba(82, 13, 23, .74), 0 0 28px rgba(236, 174, 51, .42);
+  animation: doorSealBreathe 2.1s ease-in-out infinite;
+}
+
+.door-entry-crown {
+  position: absolute;
+  top: .55rem;
+  color: #f7ce72;
+  font-size: .78rem;
+  text-shadow: 0 0 9px rgba(255, 214, 113, .8);
+}
+
+.door-entry-initials {
+  color: #ffe5a7;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, .7);
+}
+
+.door-entry-initials i {
+  margin: 0 .08rem;
+  color: #e5af4e;
+  font-family: 'Dancing Script', cursive;
+  font-size: .78em;
+  font-weight: 400;
+}
+
+.door-entry-date {
+  margin-top: .42rem;
+  color: rgba(255, 225, 164, .78);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .22em;
+}
+
+.door-entry-ripple {
+  position: absolute;
+  inset: -.15rem;
+  z-index: -1;
+  border: 1px solid rgba(244, 197, 97, .6);
+  border-radius: 50%;
+  animation: doorTapRipple 2.1s ease-out infinite;
+}
+.door-entry-ripple-two { animation-delay: 1.05s; }
+
+.door-entry-pointer {
+  position: absolute;
+  z-index: 4;
+  right: -.18rem;
+  bottom: -.1rem;
+  display: grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 1px solid rgba(255, 226, 157, .76);
+  border-radius: 50%;
+  background: #4c0a16;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, .55), 0 0 0 4px rgba(91, 18, 29, .45);
+  animation: doorPointerTap 1.45s ease-in-out infinite;
+}
+
+.door-entry-instruction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .18rem;
+  color: rgba(255, 235, 195, .72);
+  font-family: 'Cormorant Garamond', serif;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px #000;
+}
+.door-entry-instruction span { font-size: .6rem; letter-spacing: .28em; }
+.door-entry-instruction strong { color: #ffe6a9; font-size: .78rem; font-weight: 600; letter-spacing: .17em; }
+
+@keyframes doorSealBreathe {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.035); filter: brightness(1.16); }
+}
+
+@keyframes doorTapRipple {
+  0% { opacity: .7; transform: scale(.82); }
+  72%, 100% { opacity: 0; transform: scale(1.42); }
+}
+
+@keyframes doorPointerTap {
+  0%, 100% { transform: translate(3px, 3px) scale(1); }
+  45% { transform: translate(-5px, -5px) scale(1); }
+  60% { transform: translate(-5px, -5px) scale(.88); }
+  74% { transform: translate(-5px, -5px) scale(1); }
+}
+
+@keyframes doorSealOrbit { to { transform: rotate(360deg); } }
+
 .opening-welcome {
   align-self: center;
   text-align: center;
@@ -474,10 +632,16 @@ canvas {
   .door-button-label small { font-size: .52rem; letter-spacing: .2em; }
   .door-button-label strong { font-size: clamp(1.08rem, 5.3vw, 1.28rem); }
   .door-button-arrow { width: 1.95rem; height: 1.95rem; }
+  .door-entry-seal { width: 7rem; height: 7rem; }
+  .door-entry-medallion { width: 5.9rem; height: 5.9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .door-open-button::after { animation: none; }
+  .door-entry-seal::after,
+  .door-entry-medallion,
+  .door-entry-ripple,
+  .door-entry-pointer { animation: none; }
   .opening-backdrop { transition: none !important; }
 }
 

@@ -2,6 +2,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer, PerspectiveCamera } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
+import { MousePointerClick } from 'lucide-react';
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 import RoyalDoors from '../three/RoyalDoors';
@@ -292,21 +293,25 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
             >
               <button
                 type="button"
-                className="door-open-button"
+                className="door-entry-seal"
                 onClick={(event) => { event.stopPropagation(); handleOpen(); }}
                 aria-label="Open the palace doors and enter the wedding invitation"
               >
-                <span className="door-button-seal" aria-hidden="true">
-                  <i />
-                  <b>S<span>·</span>G</b>
+                <span className="door-entry-ripple door-entry-ripple-one" aria-hidden="true" />
+                <span className="door-entry-ripple door-entry-ripple-two" aria-hidden="true" />
+                <span className="door-entry-medallion" aria-hidden="true">
+                  <span className="door-entry-crown">&#10022;</span>
+                  <span className="door-entry-initials">S <i>&amp;</i> G</span>
+                  <span className="door-entry-date">13 · 11 · 26</span>
                 </span>
-                <span className="door-button-label">
-                  <small>Begin the celebration</small>
-                  <strong>Open Our Invitation</strong>
+                <span className="door-entry-pointer" aria-hidden="true">
+                  <MousePointerClick size={27} strokeWidth={1.7} />
                 </span>
-                <span className="door-button-arrow" aria-hidden="true"><i /></span>
               </button>
-              <p>Tap the gates or swipe sideways</p>
+              <div className="door-entry-instruction" aria-hidden="true">
+                <span>Touch the royal seal</span>
+                <strong>Tap anywhere to enter</strong>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
