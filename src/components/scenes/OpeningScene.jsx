@@ -2,7 +2,6 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer, PerspectiveCamera } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MousePointerClick } from 'lucide-react';
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 import RoyalDoors from '../three/RoyalDoors';
@@ -96,7 +95,7 @@ function MonogramSeal() {
   );
 }
 
-export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = 'medium' }) {
+export default function OpeningScene({ active = false, onEnter, onDoorOpen, onReady, quality = 'medium' }) {
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState('intro');
   const [backdropReady, setBackdropReady] = useState(false);
@@ -104,8 +103,6 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
   const readyReportedRef = useRef(false);
   const { supported, checked } = useWebGL();
   const reducedMotion = useReducedMotion();
-  const containerRef = useRef(null);
-  const gestureStartRef = useRef(null);
 
   const handleOpen = useCallback(() => {
     if (phase !== 'intro') return;
@@ -121,6 +118,12 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
   const handleDoorReady = useCallback(() => setDoorReady(true), []);
 
   useEffect(() => {
+    if (!active || phase !== 'intro') return undefined;
+    const timer = window.setTimeout(handleOpen, 1000);
+    return () => window.clearTimeout(timer);
+  }, [active, handleOpen, phase]);
+
+  useEffect(() => {
     const staticMode = !supported || reducedMotion;
     if (!checked || !backdropReady || (!staticMode && !doorReady) || readyReportedRef.current) return undefined;
 
@@ -133,38 +136,13 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
 
   useEffect(() => {
     if (!open) return undefined;
-    // Finish the doors, then hold the artwork before continuing the invitation.
-    // This also completes when WebGL is unavailable or motion is reduced.
+    // Continue as soon as the door and camera animation have finished.
     const timer = window.setTimeout(() => {
       setPhase('done');
       onEnter?.();
-    }, reducedMotion ? 3600 : 6200);
+    }, reducedMotion ? 600 : 3400);
     return () => window.clearTimeout(timer);
   }, [open, onEnter, reducedMotion]);
-
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) return undefined;
-    const onPointerDown = (event) => {
-      if (event.pointerType === 'mouse') return;
-      gestureStartRef.current = { x: event.clientX, y: event.clientY, time: performance.now() };
-    };
-    const onPointerUp = (event) => {
-      const start = gestureStartRef.current;
-      if (!start) return;
-      const dx = event.clientX - start.x;
-      const dy = event.clientY - start.y;
-      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.25 && performance.now() - start.time < 750) handleOpen();
-      gestureStartRef.current = null;
-    };
-
-    element.addEventListener('pointerdown', onPointerDown, { passive: true });
-    element.addEventListener('pointerup', onPointerUp, { passive: true });
-    return () => {
-      element.removeEventListener('pointerdown', onPointerDown);
-      element.removeEventListener('pointerup', onPointerUp);
-    };
-  }, [handleOpen]);
 
   if (!checked) return null;
 
@@ -176,10 +154,8 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
   return (
     <section
       id="opening"
-      ref={containerRef}
-      onClick={handleOpen}
       className={`opening-scene scene-section ${open ? 'is-open' : ''}`}
-      aria-label="Interactive royal palace entrance for the wedding invitation"
+      aria-label="Royal palace entrance for the wedding invitation"
     >
       <picture className="opening-backdrop-picture">
         <source media="(min-aspect-ratio: 1/1)" srcSet="/assets/mandapam-landscape-4k.jpg" />
@@ -278,40 +254,6 @@ export default function OpeningScene({ onEnter, onDoorOpen, onReady, quality = '
               <div className="opening-rule"><i /></div>
               <p className="opening-date">FRIDAY · 13 NOVEMBER 2026</p>
               <p className="opening-place">MAILAM · TAMIL NADU</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {phase === 'intro' && (
-            <motion.div
-              className="opening-action"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ delay: 0.35, duration: 0.75 }}
-            >
-              <button
-                type="button"
-                className="door-entry-seal"
-                onClick={(event) => { event.stopPropagation(); handleOpen(); }}
-                aria-label="Open the palace doors and enter the wedding invitation"
-              >
-                <span className="door-entry-ripple door-entry-ripple-one" aria-hidden="true" />
-                <span className="door-entry-ripple door-entry-ripple-two" aria-hidden="true" />
-                <span className="door-entry-medallion" aria-hidden="true">
-                  <span className="door-entry-crown">&#10022;</span>
-                  <span className="door-entry-initials">S <i>&amp;</i> G</span>
-                  <span className="door-entry-date">13 · 11 · 26</span>
-                </span>
-                <span className="door-entry-pointer" aria-hidden="true">
-                  <MousePointerClick size={27} strokeWidth={1.7} />
-                </span>
-              </button>
-              <div className="door-entry-instruction" aria-hidden="true">
-                <span>Touch the royal seal</span>
-                <strong>Tap anywhere to enter</strong>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>

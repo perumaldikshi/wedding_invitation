@@ -155,7 +155,7 @@ canvas {
   place-items: center;
   isolation: isolate;
   background: #090403;
-  cursor: pointer;
+  cursor: default;
   touch-action: pan-y pinch-zoom;
 }
 

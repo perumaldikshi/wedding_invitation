@@ -95,14 +95,17 @@ export default function App() {
 
   const handleEnter = useCallback(() => {
     setEntered(true);
-    // Continue directly to the invitation while the couple section is hidden.
-    setTimeout(() => {
+    // Continue to the next section as soon as the entrance animation completes.
+    window.requestAnimationFrame(() => {
       const invitationEl = document.getElementById('invitation');
       if (invitationEl) {
-        invitationEl.scrollIntoView({ behavior: 'smooth' });
+        invitationEl.scrollIntoView({
+          behavior: reducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
       }
-    }, 400);
-  }, []);
+    });
+  }, [reducedMotion]);
 
   const handleDoorOpen = useCallback(() => {
     updatePreference('music', true);
@@ -170,6 +173,7 @@ export default function App() {
         {/* Scene 1: Cinematic Opening */}
         <Suspense fallback={<SceneFallback />}>
           <OpeningScene
+            active={!loading}
             onEnter={handleEnter}
             onDoorOpen={handleDoorOpen}
             onReady={handleOpeningReady}
