@@ -106,7 +106,6 @@ export default function OpeningScene({ active = false, onEnter, onDoorOpen, onRe
 
   const handleOpen = useCallback(() => {
     if (phase !== 'intro') return;
-    // Keep playback inside the visitor's door gesture so mobile browsers allow it.
     onDoorOpen?.();
     setPhase('opening');
     setOpen(true);
@@ -119,8 +118,8 @@ export default function OpeningScene({ active = false, onEnter, onDoorOpen, onRe
 
   useEffect(() => {
     if (!active || phase !== 'intro') return undefined;
-    const timer = window.setTimeout(handleOpen, 1000);
-    return () => window.clearTimeout(timer);
+    const frame = window.requestAnimationFrame(handleOpen);
+    return () => window.cancelAnimationFrame(frame);
   }, [active, handleOpen, phase]);
 
   useEffect(() => {
