@@ -27,7 +27,7 @@ export default function InvitationCard() {
       <header className="letter-section-header" data-aos="fade-up">
         <p className="letter-section-eyebrow"><Flower2 size={16} aria-hidden="true" /> 02 / A LETTER FOR YOU</p>
         <h2 id="letter-section-title">Something lovely<br /><em>inside.</em></h2>
-        <p>{opened ? 'A celebration we would love to share with you.' : 'A little letter. A lifetime of love. Tap the seal to open.'}</p>
+        <p>{opened ? 'A celebration we would love to share with you.' : 'A little letter. A lifetime of love. Tap the glowing seal below to open.'}</p>
       </header>
 
       <div className={`letter-stage ${opened ? 'is-open' : ''}`}>
@@ -72,7 +72,7 @@ export default function InvitationCard() {
               aria-hidden="true"
             >{initials[0]}<i />{initials[1]}</motion.span>
             <span className="envelope-address">For our dearest family &amp; friends</span>
-            <span className="envelope-open-hint"><MailOpen size={15} aria-hidden="true" /> OPEN YOUR LETTER</span>
+            <span className="envelope-open-hint"><MailOpen size={16} aria-hidden="true" /> TAP TO OPEN INVITATION</span>
           </button>
         </motion.div>
 

@@ -86,8 +86,15 @@ body { background: #171b18; }
 .wedding-journal .letter-section-header > p:last-child { color: #806353; font-size: 18px; max-width: 330px; margin-top: 25px; }
 .wedding-journal .letter-stage { width: 100%; padding-top: 40px; }
 .wedding-journal .wedding-envelope { margin-bottom: 0; }
+.wedding-journal .envelope-wax-seal { animation: letterSealPulse 1.8s ease-in-out infinite; }
+.wedding-journal .envelope-wax-seal::after { content: ''; position: absolute; inset: -13px; border: 2px solid #8d3b48; border-radius: 50%; opacity: .7; animation: letterSealRing 1.8s ease-out infinite; pointer-events: none; }
+.wedding-journal .envelope-open-hint { right: auto; bottom: -20px; left: 50%; z-index: 8; width: max-content; max-width: calc(100% - 24px); min-height: 44px; padding: 11px 19px; border: 1px solid #7e3440; border-radius: 999px; background: #64333b; color: #fff6e8; box-shadow: 0 10px 24px #64333b3d, 0 0 0 5px #fff8edcc; font: 700 10px/1.4 Arial, sans-serif; letter-spacing: .16em; white-space: nowrap; transform: translateX(-50%); animation: letterOpenCue 1.8s ease-in-out infinite; }
+.wedding-journal .envelope-open-button:hover .envelope-wax-seal { filter: brightness(1.12); }
 .wedding-journal .invitation-letter { box-shadow: 0 20px 45px #7b59421f; }
 .wedding-journal .letter-close-button { background: #64333b; border-color: #64333b; }
+@keyframes letterSealPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes letterSealRing { 0% { opacity: .75; transform: scale(.88); } 75%, 100% { opacity: 0; transform: scale(1.25); } }
+@keyframes letterOpenCue { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-5px); } }
 /* All three photographs, as collected pages rather than repeated cards. */
 .memory-journal { padding: 85px max(32px, calc((100vw - 1240px) / 2)) 120px; color: #55362f; background: #f9f5ed; }
 .memory-journal .journal-section-index { color: #806e5e; }
@@ -223,6 +230,7 @@ body { background: #171b18; }
   .wedding-journal .letter-section-header > p:last-child { font-size: 17px; }
   .wedding-journal .letter-stage { margin-top: 25px; padding-top: 20px; }
   .wedding-journal .envelope-address { font-size: 18px; }
+  .wedding-journal .envelope-open-hint { bottom: -24px; min-height: 42px; padding: 10px 14px; font-size: 9px; letter-spacing: .11em; }
   .memory-journal { padding: 76px 26px 80px; }
   .memory-layout { grid-template-columns: minmax(0, 1fr); gap: 45px; }
   .memory-heading { position: relative; top: auto; }
@@ -281,6 +289,9 @@ body { background: #171b18; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .wedding-journal [data-aos] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .wedding-journal .envelope-wax-seal,
+  .wedding-journal .envelope-wax-seal::after,
+  .wedding-journal .envelope-open-hint { animation: none; }
 }
 
 /* Floating controls hidden at the user's request; soundtrack playback stays active. */
