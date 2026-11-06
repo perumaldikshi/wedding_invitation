@@ -48,20 +48,22 @@ function StudioEnvironment() {
   );
 }
 
-function Scene3D({ open, onOpenComplete }) {
+function Scene3D({ open, quality }) {
+  const particleCount = quality === 'low' ? 65 : quality === 'high' ? 220 : 130;
+  const shadowSize = quality === 'high' ? 2048 : quality === 'medium' ? 1024 : 512;
   return (
     <>
       <PerspectiveCamera makeDefault fov={52} near={0.1} far={45} />
       <CameraRig open={open} />
-      <ambientLight intensity={0.55} color="#ffe8c1" />
-      <directionalLight position={[-4, 8, 6]} intensity={2.7} color="#ffe5ad" castShadow shadow-mapSize={[1024, 1024]} />
-      <spotLight position={[0, 7, 4]} target-position={[0, 0, 0]} intensity={34} distance={18} color="#ffc56b" angle={0.48} penumbra={0.88} castShadow />
-      <pointLight position={[-3.8, 0.8, 3]} intensity={10} distance={8} color="#ff8a31" />
-      <pointLight position={[3.8, 0.8, 3]} intensity={10} distance={8} color="#ff8a31" />
+      <ambientLight intensity={0.24} color="#edf1ff" />
+      <directionalLight position={[-4, 8, 6]} intensity={1.8} color="#fff1d9" castShadow={quality !== 'low'} shadow-mapSize={[shadowSize, shadowSize]} />
+      <spotLight position={[0, 7, 4]} target-position={[0, 0, 0]} intensity={17} distance={18} color="#ffc56b" angle={0.48} penumbra={0.88} castShadow />
+      <pointLight position={[-3.8, 0.8, 3]} intensity={3} distance={8} color="#ffd8a3" />
+      <pointLight position={[3.8, 0.8, 3]} intensity={3} distance={8} color="#ffd8a3" />
       <StudioEnvironment />
-      <GoldenParticles count={150} spread={8} speed={0.22} />
-      <RoyalDoors open={open} onOpenComplete={onOpenComplete} />
-      <ContactShadows position={[0, -1.57, 0.5]} opacity={0.7} scale={10} blur={2.8} far={5.5} color="#160600" />
+      <GoldenParticles count={particleCount} spread={8} speed={0.22} />
+      <RoyalDoors open={open} />
+      {quality !== 'low' && <ContactShadows position={[0, -1.57, 0.5]} opacity={0.7} scale={10} blur={2.8} far={5.5} color="#160600" />}
       <fog attach="fog" args={['#160806', 14, 32]} />
     </>
   );
@@ -77,7 +79,7 @@ function MonogramSeal() {
   );
 }
 
-export default function OpeningScene({ onEnter }) {
+export default function OpeningScene({ onEnter, quality = 'medium' }) {
   const [open, setOpen] = useState(false);
   const [phase, setPhase] = useState('intro');
   const { supported, checked } = useWebGL();
@@ -94,12 +96,16 @@ export default function OpeningScene({ onEnter }) {
     }
   }, [phase]);
 
-  const handleOpenComplete = useCallback(() => {
-    window.setTimeout(() => {
+  useEffect(() => {
+    if (!open) return undefined;
+    // Finish the doors, then hold the artwork before continuing the invitation.
+    // This also completes when WebGL is unavailable or motion is reduced.
+    const timer = window.setTimeout(() => {
       setPhase('done');
       onEnter?.();
-    }, 520);
-  }, [onEnter]);
+    }, reducedMotion ? 3600 : 6200);
+    return () => window.clearTimeout(timer);
+  }, [open, onEnter, reducedMotion]);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -128,6 +134,9 @@ export default function OpeningScene({ onEnter }) {
   if (!checked) return null;
 
   const staticMode = !supported || reducedMotion;
+  const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches;
+  const effectiveQuality = mobile && quality === 'high' ? 'medium' : quality;
+  const dpr = effectiveQuality === 'low' ? [1, 1] : effectiveQuality === 'high' ? [1, 2] : [1, 1.5];
 
   return (
     <section
@@ -137,38 +146,73 @@ export default function OpeningScene({ onEnter }) {
       className={`opening-scene scene-section ${open ? 'is-open' : ''}`}
       aria-label="Interactive royal palace entrance for the wedding invitation"
     >
-      <motion.img
-        src="/assets/palace-mandapam-portrait.jpg"
-        alt="Illuminated South Indian wedding mandapam framed by a flower-covered palace arch"
-        className="opening-backdrop"
+      <picture className="opening-backdrop-picture">
+        <source media="(min-aspect-ratio: 1/1)" srcSet="/assets/mandapam-landscape-4k.jpg" />
+        <motion.img
+          src="/assets/mandapam-portrait-4k.jpg"
+          alt="Detailed golden South Indian wedding mandapam with carved pillars, jasmine garlands and oil lamps"
+          className="opening-backdrop"
+          width="2560"
+          height="3840"
+          initial={false}
+          animate={{ filter: open ? 'brightness(1) saturate(1)' : 'brightness(.72) saturate(.85)' }}
+          transition={{ duration: reducedMotion ? 0 : 2.4 }}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
+      </picture>
+
+      <motion.div
+        className="opening-couple-reveal"
         initial={false}
-        animate={{ scale: open ? 1.1 : 1.01, filter: open ? 'brightness(1.05) saturate(1.08)' : 'brightness(.58) saturate(.88)' }}
-        transition={{ duration: 3.2, ease: [0.16, 1, 0.3, 1] }}
-        loading="eager"
-        fetchPriority="high"
-      />
+        animate={{ opacity: open ? 1 : 0 }}
+        transition={{ duration: reducedMotion ? 0 : 1.4, delay: open && !reducedMotion ? 0.3 : 0 }}
+        aria-hidden={!open}
+      >
+        <span className="opening-reveal-word" aria-hidden="true">Forever</span>
+        <img
+          src="/assets/wedding-couple-transparent-4k.png"
+          srcSet="/assets/wedding-couple-transparent-960.png 960w, /assets/wedding-couple-transparent-1920.png 1920w, /assets/wedding-couple-transparent-4k.png 3840w"
+          sizes="100vmin"
+          width="3840"
+          height="3840"
+          alt="Tamil wedding couple holding hands, bride in a red and gold sari and groom in a white and gold veshti"
+          loading="eager"
+          decoding="async"
+        />
+      </motion.div>
 
       {staticMode ? (
-        <WebGLFallback className="absolute inset-0" />
+        <WebGLFallback className={`opening-static absolute inset-0 ${open ? 'is-revealed' : ''}`} />
       ) : (
-        <div className="opening-canvas" aria-hidden="true">
+        <motion.div
+          className="opening-canvas"
+          aria-hidden="true"
+          initial={false}
+          animate={{ opacity: open ? 0 : 1 }}
+          transition={{ duration: 0.8, delay: open ? 2.6 : 0 }}
+        >
           <Canvas
-            shadows="soft"
-            dpr={[1, 1.75]}
+            shadows={effectiveQuality === 'low' ? false : 'soft'}
+            dpr={dpr}
             gl={{ antialias: true, powerPreference: 'high-performance', alpha: true, stencil: false }}
             onCreated={({ gl }) => {
               gl.setClearColor(0x000000, 0);
               gl.outputColorSpace = THREE.SRGBColorSpace;
               gl.toneMapping = THREE.ACESFilmicToneMapping;
-              gl.toneMappingExposure = 1.08;
+              gl.toneMappingExposure = 0.95;
               gl.shadowMap.type = THREE.PCFSoftShadowMap;
             }}
           >
             <Suspense fallback={null}>
-              <Scene3D open={open} onOpenComplete={handleOpenComplete} />
+              <Scene3D
+                open={open}
+                quality={effectiveQuality}
+              />
             </Suspense>
           </Canvas>
-        </div>
+        </motion.div>
       )}
 
       <div className="cinematic-vignette" aria-hidden="true" />
@@ -186,7 +230,7 @@ export default function OpeningScene({ onEnter }) {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <MonogramSeal />
-              <p className="opening-eyebrow">TOGETHER WITH OUR FAMILIES</p>
+              <p className="opening-eyebrow">A LOVE LETTER FROM MAILAM</p>
               <h1 className="opening-title">
                 <span>{wedding.groomName}</span>
                 <em>&amp;</em>
@@ -216,27 +260,35 @@ export default function OpeningScene({ onEnter }) {
                 aria-label="Open the palace doors and enter the wedding invitation"
               >
                 <span className="tap-mark" aria-hidden="true"><i /><i /><i /></span>
-                <span><strong>Tap to Open</strong><small>our royal invitation</small></span>
+                <span><strong>Tap to Open</strong><small>a beautiful beginning awaits</small></span>
               </button>
               <p>Tap the gates or swipe sideways</p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <AnimatePresence>
-          {phase === 'opening' && (
-            <motion.div
-              className="opening-welcome"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: [0, 1, 1, 0], scale: [0.96, 1, 1, 1.03] }}
-              transition={{ duration: 2.8, times: [0, 0.2, 0.72, 1] }}
-              role="status"
-            >
-              <span>THE GATES OPEN</span>
-              <strong>Welcome to our celebration</strong>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {open && (
+          <motion.div
+            className="opening-reveal-copy"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.9, delay: reducedMotion ? 0 : 2.6 }}
+          >
+            <div className="opening-reveal-names">
+              <p className="opening-reveal-kicker">WITH LOVE, WE INVITE YOU</p>
+              <h1><span>{wedding.groomName}</span><em>&amp;</em><span>{wedding.brideName}</span></h1>
+              <p className="opening-reveal-tamil" lang="ta">{wedding.groomNameTamil} &amp; {wedding.brideNameTamil}</p>
+            </div>
+            <div className="opening-reveal-message">
+              <p className="opening-reveal-kicker">OUR BEAUTIFUL BEGINNING</p>
+              <h2>A day of love.<br /><em>A lifetime together.</em></h2>
+              <p className="opening-reveal-note">Join us as two hearts and two families<br />come together for a lifetime of love.</p>
+              <p className="opening-reveal-wedding-date">{wedding.muhurthamDate}</p>
+              <p className="opening-reveal-location">Mailam, Tamil Nadu</p>
+            </div>
+            <a className="opening-reveal-explore" href="#couple">Explore our invitation <span aria-hidden="true">&#8595;</span></a>
+          </motion.div>
+        )}
       </div>
     </section>
   );

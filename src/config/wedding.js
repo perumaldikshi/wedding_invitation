@@ -31,7 +31,7 @@ export const wedding = {
 
   // ── WEDDING DATE & TIME ──────────────────────────────────
   // 13th Friday, November 2026 (06:00 AM IST)
-  weddingDate: '2026-11-13T06:00:00',
+  weddingDate: '2026-11-13T06:00:00+05:30',
   timeZone: 'Asia/Kolkata',
   muhurthamTime: '06:00 AM – 07:30 AM IST',
   muhurthamDate: 'November 13, 2026 (Friday)',
@@ -81,34 +81,58 @@ export const wedding = {
       chapterTamil: 'இறைவன் அருளால்',
       year: '2026',
       text: 'With the divine blessings of Lord Murugan at Mailam and the heartfelt wishes of our parents, two souls and families unite in love.',
-      image: null,
+      image: '/assets/story-temple-1600.jpg',
+      imageSrcSet: '/assets/story-temple-800.jpg 800w, /assets/story-temple-1600.jpg 1600w',
+      imageAlt: 'Sridhar and Gowri together outside the temple',
+      imageWidth: 1600,
+      imageHeight: 2400,
     },
     {
       chapter: 'Two Families, One Heart',
       chapterTamil: 'இரு குடும்பங்கள் இணையும் விழா',
       year: '2026',
       text: 'From Parikkalpattu and Kavaraikadagampoondi, our journeys converge into a shared lifetime of happiness, tradition, and prosperity.',
-      image: null,
+      image: '/assets/story-seaside-1600.jpg',
+      imageSrcSet: '/assets/story-seaside-800.jpg 800w, /assets/story-seaside-1600.jpg 1600w',
+      imageAlt: 'Sridhar and Gowri smiling at each other by the sea',
+      imageWidth: 1600,
+      imageHeight: 1067,
     },
     {
       chapter: 'Forever Begins',
       chapterTamil: 'திருமண பந்தம்',
       year: '2026',
       text: 'We seek your gracious presence, prayers and blessings as we take our sacred seven steps into forever on this auspicious Friday.',
-      image: null,
+      image: '/assets/story-cafe-1600.jpg',
+      imageSrcSet: '/assets/story-cafe-800.jpg 800w, /assets/story-cafe-1600.jpg 1600w',
+      imageAlt: 'Sridhar and Gowri together at a colourful cafe',
+      imageWidth: 1600,
+      imageHeight: 1067,
     },
   ],
 
   // ── COUPLE PHOTOS ────────────────────────────────────────
   couplePhotos: {
-    main: null,
+    main: {
+      image: '/assets/couple-red-door-1600.jpg',
+      imageSrcSet: '/assets/couple-red-door-800.jpg 800w, /assets/couple-red-door-1600.jpg 1600w',
+      imageAlt: 'Sridhar and Gowri sitting together in front of a red door',
+      imageWidth: 1600,
+      imageHeight: 2400,
+    },
+    together: {
+      image: '/assets/couple-motorcycle-1600.jpg',
+      imageSrcSet: '/assets/couple-motorcycle-800.jpg 800w, /assets/couple-motorcycle-1600.jpg 1600w',
+      imageAlt: 'Sridhar and Gowri together on a motorcycle',
+      imageWidth: 1600,
+      imageHeight: 1067,
+    },
     groom: null,
     bride: null,
-    together: null,
   },
 
   // ── AUDIO ────────────────────────────────────────────────
-  backgroundMusic: null, // Procedural Web Audio API Tanpura plays smoothly
+  backgroundMusic: '/assets/audio1.mp3', // User-provided wedding soundtrack
 
   // ── THEME ────────────────────────────────────────────────
   theme: {

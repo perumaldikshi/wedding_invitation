@@ -1,358 +1,131 @@
-import { useRef, useState, useCallback } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUpRight, Flower2, MailOpen, RotateCcw } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import OrnamentalDivider from '../ui/OrnamentalDivider';
 import wedding from '../../config/wedding';
 
-function CardFace({ side, children, style = {} }) {
-  return (
-    <div
-      className="absolute inset-0 rounded-xl"
-      style={{
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-        transform: side === 'back' ? 'rotateY(180deg)' : 'none',
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function InvitationCard() {
-  const [flipped, setFlipped] = useState(false);
-  const [zoom, setZoom] = useState(1);
+  const [opened, setOpened] = useState(false);
   const reducedMotion = useReducedMotion();
-  const containerRef = useRef(null);
-  const lastTapRef = useRef(0);
-  const touchStartRef = useRef(null);
-  const pinchStartDistRef = useRef(null);
+  const letterRef = useRef(null);
+  const sealRef = useRef(null);
+  const initials = [wedding.groomName, wedding.brideName].map(name => name.trim().split(' ').at(-1)[0]);
 
-  const springConfig = { stiffness: 220, damping: 26 };
-  const tiltX = useSpring(0, springConfig);
-  const tiltY = useSpring(0, springConfig);
+  useEffect(() => {
+    if (!opened) return undefined;
+    const timer = window.setTimeout(() => letterRef.current?.focus({ preventScroll: true }), reducedMotion ? 0 : 1700);
+    return () => window.clearTimeout(timer);
+  }, [opened, reducedMotion]);
 
-  const vibrate = (pattern = 20) => {
-    if (navigator.vibrate) {
-      try { navigator.vibrate(pattern); } catch {}
-    }
-  };
-
-  const handlePointerMove = useCallback((e) => {
-    if (reducedMotion) return;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const clientX = e.clientX;
-    const clientY = e.clientY;
-
-    const nx = (clientX - cx) / (rect.width / 2);
-    const ny = (clientY - cy) / (rect.height / 2);
-    tiltX.set(Math.max(-14, Math.min(14, ny * -12)));
-    tiltY.set(Math.max(-14, Math.min(14, nx * 12)));
-  }, [reducedMotion, tiltX, tiltY]);
-
-  const handlePointerLeave = useCallback(() => {
-    tiltX.set(0);
-    tiltY.set(0);
-  }, [tiltX, tiltY]);
-
-  // Touch gesture handling: swipe to flip, double tap reset, pinch zoom
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      touchStartRef.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-        time: Date.now()
-      };
-    } else if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      pinchStartDistRef.current = Math.hypot(dx, dy);
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (e.touches.length === 2 && pinchStartDistRef.current) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const currentDist = Math.hypot(dx, dy);
-      const scaleDelta = currentDist / pinchStartDistRef.current;
-      setZoom((prev) => Math.max(0.9, Math.min(1.3, prev * (scaleDelta > 1 ? 1.02 : 0.98))));
-    } else if (e.touches.length === 1 && touchStartRef.current) {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const nx = (e.touches[0].clientX - cx) / (rect.width / 2);
-      const ny = (e.touches[0].clientY - cy) / (rect.height / 2);
-      tiltX.set(ny * -8);
-      tiltY.set(nx * 8);
-    }
-  };
-
-  const handleTouchEnd = (e) => {
-    if (touchStartRef.current && e.changedTouches.length === 1) {
-      const t = e.changedTouches[0];
-      const dx = t.clientX - touchStartRef.current.x;
-      const dy = t.clientY - touchStartRef.current.y;
-      const dt = Date.now() - touchStartRef.current.time;
-
-      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 400) {
-        setFlipped((f) => !f);
-        vibrate(30);
-      }
-    }
-    touchStartRef.current = null;
-    pinchStartDistRef.current = null;
-    tiltX.set(0);
-    tiltY.set(0);
-  };
-
-  const handleTap = useCallback(() => {
-    const now = Date.now();
-    if (now - lastTapRef.current < 320) {
-      setFlipped(false);
-      setZoom(1);
-      tiltX.set(0);
-      tiltY.set(0);
-      vibrate([20, 40, 20]);
-    } else {
-      setFlipped((f) => !f);
-      vibrate(25);
-    }
-    lastTapRef.current = now;
-  }, [tiltX, tiltY]);
-
-  const goldBorder = {
-    border: '2px solid rgba(212, 160, 23, 0.7)',
-    boxShadow: '0 0 45px rgba(212,160,23,0.22), 0 25px 50px rgba(0,0,0,0.8), inset 0 0 35px rgba(0,0,0,0.4)',
+  const closeLetter = () => {
+    setOpened(false);
+    window.requestAnimationFrame(() => sealRef.current?.focus({ preventScroll: true }));
   };
 
   return (
-    <section
-      id="invitation"
-      className="scene-section flex flex-col items-center justify-center px-4 py-20 min-h-screen relative"
-      style={{
-        backgroundImage: "linear-gradient(180deg, rgba(8,3,2,.96), rgba(28,8,7,.84), rgba(8,3,2,.97)), url('/assets/palace-mandapam-portrait.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-      aria-label="3D Invitation card"
-    >
-      <div className="text-center mb-8 relative z-10">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="tracking-[0.4em] text-xs mb-3"
-          style={{ color: 'rgba(212,160,23,0.6)' }}
-        >
-          ROYAL INVITATION
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-display text-4xl md:text-5xl"
-          style={{ color: '#FFD700' }}
-        >
-          Invitation Card
-        </motion.h2>
-        <OrnamentalDivider />
-        <p className="text-xs md:text-sm" style={{ color: 'rgba(212,160,23,0.7)' }}>
-          Swipe / Tap to flip · Drag to tilt · Double-tap to reset
-        </p>
-      </div>
+    <section id="invitation" className="scene-section letter-invitation" aria-labelledby="letter-section-title">
+      <header className="letter-section-header" data-aos="fade-up">
+        <p className="letter-section-eyebrow"><Flower2 size={16} aria-hidden="true" /> 02 / A LETTER FOR YOU</p>
+        <h2 id="letter-section-title">Something lovely<br /><em>inside.</em></h2>
+        <p>{opened ? 'A celebration we would love to share with you.' : 'A little letter. A lifetime of love. Tap the seal to open.'}</p>
+      </header>
 
-      {/* 3D Card Container */}
-      <motion.div
-        ref={containerRef}
-        style={{
-          perspective: 1100,
-          width: '100%',
-          maxWidth: 440,
-          height: 'min(620px, 68svh)',
-          cursor: 'pointer',
-          rotateX: tiltX,
-          rotateY: tiltY,
-          scale: zoom,
-          touchAction: 'pan-y'
-        }}
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={handleTap}
-        role="button"
-        aria-label={flipped ? 'Invitation card showing ceremony details. Tap to flip back.' : 'Invitation card cover. Tap or swipe to open details.'}
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTap(); }}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className={`letter-stage ${opened ? 'is-open' : ''}`}>
         <motion.div
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            transformStyle: 'preserve-3d',
-            rotateY: flipped ? 180 : 0,
-          }}
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+          className="wedding-envelope"
+          initial={false}
+          animate={{ opacity: opened ? 0 : 1, y: opened ? 90 : 0, scale: opened ? 0.94 : 1 }}
+          transition={{ duration: reducedMotion ? 0 : 0.65, delay: opened && !reducedMotion ? 1.05 : 0 }}
+          aria-hidden={opened}
         >
-          {/* FRONT FACE */}
-          <CardFace
-            style={{
-              backgroundImage: "linear-gradient(rgba(255,246,222,.06), rgba(255,246,222,.06)), url('/assets/ivory-invitation-paper.jpg')",
-              backgroundSize: '100% 100%',
-              backgroundPosition: 'center',
-              color: '#4b2819',
-              ...goldBorder,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '2.5rem 1.75rem',
-            }}
+          <div className="envelope-back" />
+          <motion.div
+            className="envelope-letter-peek"
+            initial={false}
+            animate={{ y: opened ? '-44%' : '0%', opacity: opened ? 1 : 0.65 }}
+            transition={{ duration: reducedMotion ? 0 : 0.8, delay: opened && !reducedMotion ? 0.45 : 0 }}
+            aria-hidden="true"
+          ><Flower2 size={22} /><span>{wedding.groomName} &amp; {wedding.brideName}</span></motion.div>
+          <div className="envelope-pocket" aria-hidden="true"><i /><i /><span /></div>
+          <motion.div
+            className="envelope-flap"
+            initial={false}
+            animate={{ rotateX: opened ? -180 : 0, zIndex: opened ? 1 : 5 }}
+            transition={{ rotateX: { duration: reducedMotion ? 0 : 0.7 }, zIndex: { delay: opened && !reducedMotion ? 0.35 : 0 } }}
+            aria-hidden="true"
+          />
+          <button
+            ref={sealRef}
+            type="button"
+            className="envelope-open-button"
+            disabled={opened}
+            onClick={() => setOpened(true)}
+            aria-expanded={opened}
+            aria-controls="wedding-invitation-letter"
+            aria-label="Open invitation letter"
           >
-            {/* Embossed corner details */}
-            {['top-4 left-4', 'top-4 right-4', 'bottom-4 left-4', 'bottom-4 right-4'].map((pos) => (
-              <div
-                key={pos}
-                className={`absolute ${pos} card-corner-detail`}
-                aria-hidden="true"
-              />
-            ))}
-
-            <div
-              className="absolute inset-4 rounded-lg pointer-events-none"
-              style={{ border: '1px solid rgba(212,160,23,0.3)', boxShadow: 'inset 0 0 15px rgba(212,160,23,0.1)' }}
+            <motion.span
+              className="envelope-wax-seal"
+              initial={false}
+              animate={{ opacity: opened ? 0 : 1, scale: opened ? 0.7 : 1 }}
+              transition={{ duration: reducedMotion ? 0 : 0.2 }}
               aria-hidden="true"
-            />
-
-            <div className="invitation-monogram mb-2" aria-hidden="true">S <i /> G</div>
-
-            <p className="tracking-[0.4em] text-[10px] mb-3 uppercase" style={{ color: 'rgba(212,160,23,0.7)' }}>
-              Wedding Invitation
-            </p>
-
-            <h3
-              className="font-display text-3xl md:text-4xl mb-0.5 text-center"
-              style={{
-                background: 'linear-gradient(135deg, #FFD700, #F7E7CE, #D4A017)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {wedding.groomName} <span className="text-lg font-normal text-gold-400">({wedding.groomDegree})</span>
-            </h3>
-            <p className="text-[11px] mb-2" style={{ color: '#6c4630' }}>{wedding.groomOccupation}</p>
-
-            <div className="font-script text-xl my-1" style={{ color: '#9d621c' }}>weds</div>
-
-            <h3
-              className="font-display text-3xl md:text-4xl mb-0.5 text-center"
-              style={{
-                background: 'linear-gradient(135deg, #FFD700, #F7E7CE, #D4A017)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {wedding.brideName} <span className="text-lg font-normal text-gold-400">({wedding.brideDegree})</span>
-            </h3>
-
-            <div className="w-24 h-px my-4" style={{ background: 'linear-gradient(90deg, transparent, #D4A017, transparent)' }} />
-
-            <p className="text-sm font-semibold tracking-wider mb-1 font-display" style={{ color: '#FFD700' }}>
-              13th Friday, November 2026
-            </p>
-
-            <p className="text-xs text-center max-w-[280px] mb-4" style={{ color: '#6c4630' }}>
-              Mailam, Tamil Nadu
-            </p>
-
-            <div
-              className="px-4 py-2 rounded-full border text-[11px] tracking-widest uppercase flex items-center gap-1.5"
-              style={{ borderColor: 'rgba(212,160,23,0.4)', background: 'rgba(212,160,23,0.08)', color: '#FFD700' }}
-            >
-              Tap to Open Full Invitation
-            </div>
-          </CardFace>
-
-          {/* BACK FACE — Full Details from Physical Card */}
-          <CardFace
-            side="back"
-            style={{
-              background: 'radial-gradient(ellipse at center, #8a0b27 0%, #540316 70%, #30010c 100%)',
-              ...goldBorder,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '2rem 1.75rem',
-              overflowY: 'auto',
-            }}
-          >
-            {/* Corner ornaments */}
-            {['top-4 left-4', 'top-4 right-4', 'bottom-4 left-4', 'bottom-4 right-4'].map((pos) => (
-              <div key={pos} className={`absolute ${pos} card-corner-detail card-corner-light`} aria-hidden="true" />
-            ))}
-            <div className="absolute inset-4 rounded-lg pointer-events-none" style={{ border: '1px solid rgba(255,215,0,0.25)' }} aria-hidden="true" />
-
-            <p className="tracking-[0.3em] text-[10px] mb-2 uppercase text-center" style={{ color: 'rgba(255,215,0,0.7)' }}>
-              Ceremony Schedule
-            </p>
-
-            <h3 className="font-display text-2xl text-center text-gold-300 font-semibold mb-0.5">
-              {wedding.groomName} <span className="text-sm font-normal">({wedding.groomDegree})</span>
-            </h3>
-            <p className="text-[11px] text-champagne/80 mb-0.5">{wedding.groomOccupation}</p>
-            <p className="text-[10px] text-gold-400/80 mb-2">{wedding.groomFamily}</p>
-
-            <div className="text-xs my-0.5 text-gold-400 font-script text-xl">weds</div>
-
-            <h3 className="font-display text-2xl text-center text-gold-300 font-semibold mb-0.5">
-              {wedding.brideName} <span className="text-sm font-normal">({wedding.brideDegree})</span>
-            </h3>
-            <p className="text-[10px] text-gold-400/80 mb-3">{wedding.brideFamily}</p>
-
-            <div className="w-full h-px my-2" style={{ background: 'linear-gradient(90deg, transparent, #FFD700, transparent)' }} />
-
-            <div className="w-full grid grid-cols-2 gap-3 text-center my-1">
-              <div className="p-2 rounded bg-black/30 border border-gold-500/20">
-                <p className="text-[9px] uppercase tracking-wider text-gold-400 font-bold">Muhurtham</p>
-                <p className="text-[10px] text-champagne font-medium">13th Fri, Nov 2026</p>
-                <p className="text-[9px] text-gold-300">6.00 am to 7.30 am</p>
-                <p className="text-[8px] text-champagne/70 mt-1">Sri Subramaniya Swamy Sannithi, Mailam</p>
-              </div>
-
-              <div className="p-2 rounded bg-black/30 border border-gold-500/20">
-                <p className="text-[9px] uppercase tracking-wider text-gold-400 font-bold">Reception</p>
-                <p className="text-[10px] text-champagne font-medium">13th Fri, Nov 2026</p>
-                <p className="text-[9px] text-gold-300">6.30 pm Onwards</p>
-                <p className="text-[8px] text-champagne/70 mt-1">Kasiyammal Thirumana Mandapam, (Pondy Rd) Mailam</p>
-              </div>
-            </div>
-
-            <div className="mt-3 text-[10px] text-center text-champagne/80 italic">
-              Best Compliments from: Friends & Relatives
-            </div>
-
-            <p className="mt-3 text-[10px] tracking-wider text-center" style={{ color: 'rgba(255,215,0,0.6)' }}>
-              Double-tap to close · Swipe to flip
-            </p>
-          </CardFace>
+            >{initials[0]}<i />{initials[1]}</motion.span>
+            <span className="envelope-address">For our dearest family &amp; friends</span>
+            <span className="envelope-open-hint"><MailOpen size={15} aria-hidden="true" /> OPEN YOUR LETTER</span>
+          </button>
         </motion.div>
-      </motion.div>
+
+        <AnimatePresence>
+          {opened && (
+            <motion.div
+              key="letter"
+              className="invitation-letter-wrap"
+              initial={reducedMotion ? false : { opacity: 0, y: 110, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 35, transition: { duration: reducedMotion ? 0 : 0.2 } }}
+              transition={{ duration: reducedMotion ? 0 : 0.85, delay: reducedMotion ? 0 : 0.65, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <article ref={letterRef} id="wedding-invitation-letter" className="invitation-letter" tabIndex={-1} aria-labelledby="letter-couple-names">
+                <div className="letter-paper-heading">
+                  <Flower2 size={30} strokeWidth={1.25} aria-hidden="true" />
+                  <p>TOGETHER WITH OUR FAMILIES</p>
+                  <h3 id="letter-couple-names"><span>{wedding.groomName}</span><em>&amp;</em><span>{wedding.brideName}</span></h3>
+                  <p className="letter-personal-message">With joyful hearts, we invite you to join us<br /> as we begin our forever.</p>
+                </div>
+
+                <motion.div
+                  className="letter-unfolded-details"
+                  initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  transition={{ duration: reducedMotion ? 0 : 0.7, delay: reducedMotion ? 0 : 1.2 }}
+                >
+                  <div className="letter-families">
+                    <div><span>THE GROOM</span><strong>{wedding.groomName}</strong><p>{wedding.groomDegree}</p><p>{wedding.groomOccupation}</p><p>S/o. {wedding.groomParents}</p><p>{wedding.groomNative}</p></div>
+                    <div><span>THE BRIDE</span><strong>{wedding.brideName}</strong><p>{wedding.brideDegree}</p><p>D/o. {wedding.brideParents}</p><p>{wedding.brideNative}</p></div>
+                  </div>
+                  <p className="letter-date">{wedding.muhurthamDate}</p>
+                  <div className="letter-events">
+                    {wedding.events.filter(event => event.enabled).map(event => (
+                      <div key={event.id} className="letter-event">
+                        <h4>{event.title}</h4>
+                        <p className="letter-event-time">{event.time}</p>
+                        <p className="letter-event-venue">{event.venue}</p>
+                        <p>{event.address}</p>
+                        <a href={event.mapUrl} target="_blank" rel="noopener noreferrer">View location <ArrowUpRight size={14} aria-hidden="true" /></a>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="letter-closing">Your presence will make our day complete.</p>
+                  <p className="letter-signature">With love, Sridhar &amp; Gowri</p>
+                  <p className="letter-compliments">{wedding.compliments}</p>
+                </motion.div>
+              </article>
+              <button type="button" className="letter-close-button" onClick={closeLetter}><RotateCcw size={16} aria-hidden="true" /> Fold &amp; close letter</button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </section>
   );
 }

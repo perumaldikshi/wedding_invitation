@@ -7,8 +7,8 @@ import * as THREE from 'three';
 const GOLD = '#d9a441';
 const DEEP_GOLD = '#7e4c12';
 
-function GoldMaterial({ roughness = 0.24, color = GOLD }) {
-  return <meshStandardMaterial color={color} metalness={0.92} roughness={roughness} envMapIntensity={1.45} />;
+function GoldMaterial({ roughness = 0.4, color = GOLD }) {
+  return <meshStandardMaterial color={color} metalness={0.78} roughness={roughness} envMapIntensity={0.85} />;
 }
 
 function Flame({ position }) {
@@ -121,7 +121,7 @@ function DoorLeaf({ side, open, texture }) {
         </mesh>
         <mesh castShadow position={[0, 0, 0.102]}>
           <planeGeometry args={[1.86, 4.02]} />
-          <meshStandardMaterial map={faceTexture} bumpMap={faceTexture} bumpScale={0.045} metalness={0.74} roughness={0.27} envMapIntensity={1.7} />
+          <meshStandardMaterial map={faceTexture} bumpMap={faceTexture} bumpScale={0.025} metalness={0.48} roughness={0.48} envMapIntensity={0.9} />
         </mesh>
 
         {[-0.78, 0.78].flatMap((x) => [-1.82, 1.82].map((y) => (

@@ -3,9 +3,11 @@ import LoadingScreen from './components/ui/LoadingScreen';
 import AudioControl from './components/ui/AudioControl';
 import FloatingNav from './components/ui/FloatingNav';
 import PetalCanvas from './components/ui/PetalCanvas';
+import ExperienceSettings from './components/ui/ExperienceSettings';
 import { useAudio } from './hooks/useAudio';
 import { useReducedMotion } from './hooks/useReducedMotion';
-import { useGyroscope } from './hooks/useGyroscope';
+import { useScrollAnimations } from './hooks/useScrollAnimations';
+import { useWeddingPreferences } from './hooks/useWeddingPreferences';
 import wedding from './config/wedding';
 
 // Lazy-load heavy scenes
@@ -42,33 +44,42 @@ function SceneFallback() {
 }
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !new URLSearchParams(window.location.search).has('qa'));
   const [entered, setEntered] = useState(false);
   const [currentScene, setCurrentScene] = useState(0);
   const [petalActive, setPetalActive] = useState(false);
   const reducedMotion = useReducedMotion();
-  const { tilt, enabled: gyroEnabled, supported: gyroSupported, enable: enableGyro, disable: disableGyro } = useGyroscope();
+  const { preferences, updatePreference } = useWeddingPreferences();
+  useScrollAnimations(loading);
 
   const audio = useAudio(wedding.backgroundMusic);
 
-  // Track current scene based on scroll
+  const handleMusicChange = useCallback((enabled) => {
+    updatePreference('music', enabled);
+    if (enabled) audio.play();
+    else audio.pause();
+  }, [audio, updatePreference]);
+
   useEffect(() => {
-    if (loading) return;
-    const sections = ['opening', 'couple', 'invitation', 'story', 'events', 'countdown', 'final'];
-    const observers = sections.map((id, index) => {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setCurrentScene(index);
-        },
-        { threshold: 0.3 }
-      );
-      obs.observe(el);
-      return obs;
-    });
-    return () => observers.forEach((obs) => obs?.disconnect());
-  }, [loading, entered]);
+    if (loading) return undefined;
+    let frame;
+    const ids = ['opening', 'couple', 'invitation', 'story', 'events', 'countdown', 'final'];
+    const track = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        let current = 0;
+        ids.forEach((id, index) => {
+          if (document.getElementById(id)?.getBoundingClientRect().top <= innerHeight * 0.4) current = index;
+        });
+        setCurrentScene(current);
+      });
+    };
+    const observer = new MutationObserver(track);
+    observer.observe(document.querySelector('main') || document.body, { childList: true, subtree: true });
+    window.addEventListener('scroll', track, { passive: true });
+    track();
+    return () => { observer.disconnect(); window.removeEventListener('scroll', track); cancelAnimationFrame(frame); };
+  }, [loading]);
 
   // Enable petals after entering
   useEffect(() => {
@@ -102,47 +113,32 @@ export default function App() {
 
   return (
     <div
-      className="relative min-h-screen bg-palace-bg text-ivory selection:bg-gold-500 selection:text-palace-bg"
-      style={{
-        transform: gyroEnabled ? `translate3d(${tilt.y * 8}px, ${tilt.x * 8}px, 0)` : undefined,
-        transition: 'transform 0.15s ease-out'
-      }}
+      className="wedding-journal"
     >
       {/* Interactive flower petal canvas */}
-      {!reducedMotion && (
-        <PetalCanvas active={petalActive} density={14} />
+      {!reducedMotion && preferences.petalEffects && (
+        <PetalCanvas
+          active={petalActive && preferences.petalEffects}
+          density={preferences.quality === 'low' ? 8 : preferences.quality === 'high' ? 20 : 14}
+        />
       )}
 
       {/* Floating Audio Controls */}
       <AudioControl
         playing={audio.playing}
         muted={audio.muted}
-        onToggle={audio.toggle}
+        onToggle={() => handleMusicChange(!audio.playing)}
         onToggleMute={audio.toggleMute}
-        hasMusic={true}
+        blocked={audio.blocked}
+        error={audio.error}
       />
 
-      {/* Mobile Gyroscope Parallax Toggle Button */}
-      {gyroSupported && (
-        <button
-          onClick={gyroEnabled ? disableGyro : enableGyro}
-          className="fixed top-5 left-5 z-50 touch-target px-3 py-1.5 rounded-full border text-xs tracking-wider flex items-center gap-1.5 backdrop-blur-md cursor-pointer transition-all shadow-lg"
-          style={{
-            top: 'calc(1.25rem + env(safe-area-inset-top, 0px))',
-            background: 'rgba(10,5,5,0.85)',
-            borderColor: gyroEnabled ? '#FFD700' : 'rgba(212,160,23,0.3)',
-            color: gyroEnabled ? '#FFD700' : 'rgba(247,231,206,0.6)',
-            boxShadow: gyroEnabled ? '0 0 15px rgba(255,215,0,0.3)' : 'none'
-          }}
-          aria-label={gyroEnabled ? 'Disable motion parallax' : 'Enable motion parallax'}
-          title="Tilt device for 3D perspective"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <rect x="6" y="2" width="12" height="20" rx="2" /><path d="M10 18h4" />
-          </svg>
-          <span>{gyroEnabled ? '3D Motion On' : '3D Motion'}</span>
-        </button>
-      )}
+      <ExperienceSettings
+        preferences={{ ...preferences, music: audio.playing }}
+        onChange={updatePreference}
+        onMusicChange={handleMusicChange}
+        onReplay={handleReplay}
+      />
 
       {/* Floating navigation bar with progress indicator */}
       <FloatingNav currentScene={currentScene} />
@@ -158,7 +154,10 @@ export default function App() {
       <main>
         {/* Scene 1: Cinematic Opening */}
         <Suspense fallback={<SceneFallback />}>
-          <OpeningScene onEnter={handleEnter} />
+          <OpeningScene
+            onEnter={handleEnter}
+            quality={preferences.quality}
+          />
         </Suspense>
 
         {/* Scene 2: Couple Reveal */}

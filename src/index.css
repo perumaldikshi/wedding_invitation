@@ -503,3 +503,427 @@ canvas {
   background: linear-gradient(145deg, #c90f3d, #73001f);
   box-shadow: inset 1px 1px 2px rgba(255, 190, 190, .48), 0 2px 5px rgba(0, 0, 0, .24);
 }
+
+.experience-settings {
+  position: fixed;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 80;
+}
+.settings-orb {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(220, 170, 72, .62);
+  border-radius: 50%;
+  color: #e7bd68;
+  background: radial-gradient(circle at 35% 25%, rgba(113, 32, 25, .98), rgba(15, 4, 3, .96));
+  box-shadow: inset 0 1px 0 rgba(255, 228, 157, .2), 0 8px 25px rgba(0, 0, 0, .56), 0 0 20px rgba(205, 145, 47, .12);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+.settings-panel {
+  position: absolute;
+  left: 0;
+  bottom: 3.7rem;
+  width: min(21.5rem, calc(100vw - 2rem));
+  overflow: hidden;
+  border: 1px solid rgba(218, 169, 74, .42);
+  border-radius: 1.15rem;
+  color: #f3e0bb;
+  background: linear-gradient(155deg, rgba(48, 11, 10, .97), rgba(9, 3, 2, .98));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .72), inset 0 1px 0 rgba(255, 229, 168, .14);
+  backdrop-filter: blur(24px);
+}
+.settings-heading {
+  padding: 1.15rem 1.2rem .95rem;
+  border-bottom: 1px solid rgba(218, 169, 74, .16);
+  background: radial-gradient(circle at 15% 0%, rgba(146, 58, 31, .28), transparent 58%);
+}
+.settings-heading span { display: block; color: rgba(228, 183, 94, .62); font-size: .58rem; letter-spacing: .35em; }
+.settings-heading strong { display: block; margin-top: .18rem; color: #f0cd82; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; }
+.settings-list { padding: .55rem .75rem; }
+.setting-row {
+  width: 100%;
+  min-height: 2.8rem;
+  display: grid;
+  grid-template-columns: 1.3rem 1fr auto;
+  align-items: center;
+  gap: .65rem;
+  padding: .42rem .45rem;
+  border: 0;
+  border-bottom: 1px solid rgba(218, 169, 74, .09);
+  color: #e9d6b5;
+  background: transparent;
+  text-align: left;
+  font: 500 .78rem/1.2 'EB Garamond', serif;
+  letter-spacing: .035em;
+  cursor: pointer;
+}
+.setting-row:last-child { border-bottom: 0; }
+.setting-row > svg { color: #c9913c; }
+.setting-switch {
+  width: 2rem;
+  height: 1.08rem;
+  padding: .12rem;
+  display: block;
+  border: 1px solid rgba(211, 164, 73, .35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .06);
+  transition: .2s ease;
+}
+.setting-switch b {
+  width: .72rem;
+  height: .72rem;
+  display: block;
+  border-radius: 50%;
+  background: rgba(240, 216, 173, .55);
+  transition: transform .2s ease, background .2s ease;
+}
+.setting-switch.is-on { border-color: #d0a14b; background: rgba(128, 0, 32, .72); }
+.setting-switch.is-on b { transform: translateX(.87rem); background: #ffd77e; box-shadow: 0 0 8px rgba(255, 207, 108, .7); }
+.quality-fieldset { margin: .1rem .95rem .8rem; padding: .72rem; border: 1px solid rgba(218, 169, 74, .19); border-radius: .75rem; }
+.quality-fieldset legend { padding: 0 .35rem; color: rgba(228, 183, 94, .68); font-size: .55rem; letter-spacing: .28em; }
+.quality-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; }
+.quality-options button {
+  padding: .42rem .25rem;
+  border: 1px solid rgba(218, 169, 74, .2);
+  border-radius: .4rem;
+  color: rgba(239, 218, 178, .62);
+  background: rgba(255, 255, 255, .025);
+  font-size: .58rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.quality-options button.is-active { color: #160705; border-color: #e0b35b; background: linear-gradient(135deg, #b27729, #f0ce7e); box-shadow: 0 3px 12px rgba(201, 142, 52, .25); }
+.quality-fieldset p { margin: .52rem 0 0; color: rgba(235, 215, 180, .42); font-size: .58rem; }
+.settings-replay {
+  width: calc(100% - 1.9rem);
+  min-height: 2.55rem;
+  margin: 0 .95rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border: 1px solid rgba(225, 177, 79, .45);
+  border-radius: .55rem;
+  color: #e9c878;
+  background: rgba(136, 30, 36, .18);
+  font: 600 .72rem 'EB Garamond', serif;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+/* Keep the full supplied couple artwork visible behind the Three.js doors. */
+.opening-couple-reveal {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: grid;
+  place-items: center;
+  padding: max(1.5rem, env(safe-area-inset-top)) 1rem 6rem;
+  background: linear-gradient(180deg, rgba(9, 4, 3, .12), rgba(9, 4, 3, .56));
+  pointer-events: none;
+}
+.opening-couple-reveal img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  object-position: center;
+}
+.opening-static { transition: opacity 1s ease; }
+.opening-static.is-revealed { opacity: 0; pointer-events: none; }
+.opening-scene .cinematic-vignette,
+.opening-scene .cinematic-grain { transition: opacity 1.4s ease; }
+.opening-scene.is-open .cinematic-vignette,
+.opening-scene.is-open .cinematic-grain { opacity: 0; }
+.opening-scene.is-open .opening-welcome {
+  position: absolute;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  left: 1rem;
+  right: 1rem;
+  color: #f8dda0;
+  filter: drop-shadow(0 3px 10px #090403);
+}
+.opening-scene.is-open .opening-welcome strong {
+  font-size: clamp(1.6rem, 4.5vw, 2.5rem);
+}
+@media (prefers-reduced-motion: reduce) {
+  .opening-static,
+  .opening-scene .cinematic-vignette,
+  .opening-scene .cinematic-grain { transition: none; }
+}
+
+/* Story photos retain their original portrait or landscape composition. */
+.story-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  padding: 0 24px;
+  touch-action: pan-y;
+}
+.story-slide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: 28px;
+  width: 100%;
+}
+.story-photo-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  --story-photo-height: clamp(300px, 56svh, 480px);
+  height: var(--story-photo-height);
+}
+.story-photo-frame {
+  width: min(100%, calc(var(--story-photo-ratio) * var(--story-photo-height)));
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  overflow: hidden;
+  border: 1px solid rgba(212, 160, 23, .7);
+  border-radius: 12px;
+  background: #140808;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .45);
+}
+.story-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.story-caption { min-height: 235px; }
+@media (min-width: 768px) {
+  .story-slide {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 60px);
+  }
+  .story-photo-area { --story-photo-height: 500px; }
+  .story-caption { min-height: 0; }
+}
+
+/* Couple introduction: an ivory wedding keepsake with a real portrait. */
+.couple-editorial {
+  position: relative;
+  padding: 96px 24px 56px;
+  color: #48272a;
+  background: #f7f1e6;
+  isolation: isolate;
+}
+.couple-editorial::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 260px;
+  width: min(1100px, 125vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(151, 114, 57, .14);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: -1;
+}
+.couple-editorial-inner { width: min(1180px, 100%); margin-inline: auto; }
+.couple-editorial-header { text-align: center; max-width: 840px; margin: 0 auto 72px; }
+.couple-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  color: #806238;
+  font: 600 11px/1.6 'EB Garamond', Georgia, serif;
+  letter-spacing: .24em;
+}
+.couple-editorial-header h2 {
+  margin: 0;
+  color: #582a33;
+  font: 500 clamp(38px, 4.8vw, 68px)/1.03 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: -.035em;
+}
+.couple-editorial-header h2 em { display: block; font-weight: 400; }
+.couple-introduction { margin: 23px auto 0; max-width: 640px; color: #6f5b50; font-size: 18px; line-height: 1.65; }
+.couple-editorial-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px) minmax(0, 1fr);
+  grid-template-areas: 'groom portrait bride';
+  align-items: center;
+  gap: clamp(28px, 4vw, 64px);
+}
+.couple-person-groom { grid-area: groom; text-align: right; }
+.couple-person-bride { grid-area: bride; text-align: left; }
+.couple-role { margin: 0 0 16px; color: #8b6740; font-size: 11px; font-weight: 600; letter-spacing: .28em; }
+.couple-person h3 { margin: 0; color: #582a33; font: 600 clamp(32px, 3.5vw, 48px)/1.12 'Cormorant Garamond', Georgia, serif; letter-spacing: -.04em; }
+.couple-tamil-name { margin: 12px 0 8px; color: #744c48; font: 400 14px/1.7 'Noto Serif Tamil', serif; }
+.couple-degree { margin: 0; color: #806238; font-size: 16px; }
+.couple-occupation { margin: 10px 0 0; color: #6f5b50; font-size: 15px; line-height: 1.5; }
+.couple-person-rule { display: block; width: 45px; height: 1px; margin: 26px 0 22px; background: #b08c57; }
+.couple-person-groom .couple-person-rule { margin-left: auto; }
+.couple-family-label { margin: 0 0 8px; color: #846c5d; font-size: 14px; font-style: italic; }
+.couple-parents { margin: 0; color: #48272a; font-size: 17px; line-height: 1.5; font-weight: 600; }
+.couple-native { margin: 8px 0 0; color: #766256; font-size: 15px; line-height: 1.5; }
+.couple-portrait { grid-area: portrait; position: relative; width: 100%; margin: 0; padding: 9px; }
+.couple-portrait-outline { position: absolute; inset: 0; border: 1px solid #b59461; border-radius: 200px 200px 12px 12px; pointer-events: none; }
+.couple-portrait img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 200px 200px 5px 5px; }
+.couple-photo-caption { margin-top: 16px; text-align: center; color: #8b6740; font: 400 27px/1.3 'Dancing Script', cursive; }
+.couple-date-stamp {
+  position: absolute;
+  right: -30px;
+  bottom: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  color: #f7eddb;
+  background: #612f39;
+  border: 5px solid #f7f1e6;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #b59461;
+  transform: rotate(9deg);
+}
+.couple-date-stamp span { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; line-height: 1.3; }
+.couple-date-stamp strong { font: 500 38px/.95 'Cormorant Garamond', Georgia, serif; margin: 3px 0; }
+.couple-celebration {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1.3fr;
+  align-items: center;
+  gap: 30px;
+  margin-top: 64px;
+  padding: 28px 34px;
+  background: #612f39;
+  color: #f7eddb;
+  border-radius: 3px;
+}
+.couple-celebration-heading { display: flex; align-items: center; gap: 18px; font-size: 17px; line-height: 1.25; }
+.couple-celebration-heading svg { color: #d7b886; flex-shrink: 0; }
+.couple-celebration-heading strong { font: italic 400 30px/1.1 'Cormorant Garamond', Georgia, serif; }
+.couple-celebration-date { border-left: 1px solid rgba(247, 237, 219, .24); padding-left: 30px; }
+.couple-celebration-date > span { display: block; margin-bottom: 7px; color: #ddc39d; font-size: 9px; letter-spacing: .22em; }
+.couple-celebration-date strong { display: block; font-size: 18px; font-weight: 500; }
+.couple-celebration-date p { margin: 5px 0 0; font-size: 14px; color: #ead6c0; }
+.couple-celebration-venue { display: flex; gap: 12px; align-items: flex-start; }
+.couple-celebration-venue svg { flex-shrink: 0; margin-top: 5px; color: #ddc39d; }
+.couple-celebration-venue p { margin: 0; font-size: 16px; line-height: 1.5; }
+.couple-celebration-venue span { display: block; font-size: 14px; color: #ead6c0; }
+.couple-blessing { margin: 24px 0 0; text-align: center; color: #80694e; font: 400 12px/1.9 'Noto Serif Tamil', serif; }
+@media (max-width: 999px) {
+  .couple-editorial-stage { grid-template-columns: minmax(0, 1fr) 300px minmax(0, 1fr); gap: 24px; }
+  .couple-person h3 { font-size: 34px; }
+  .couple-parents { font-size: 15px; }
+  .couple-celebration { gap: 22px; padding: 25px; grid-template-columns: 1fr 1.4fr; }
+  .couple-celebration-venue { grid-column: 1 / -1; justify-content: center; padding-top: 18px; border-top: 1px solid rgba(247, 237, 219, .24); text-align: center; }
+}
+@media (max-width: 699px) {
+  .couple-editorial { padding: 76px 24px 40px; }
+  .couple-editorial-header { margin-bottom: 38px; }
+  .couple-eyebrow { font-size: 9px; gap: 8px; letter-spacing: .15em; }
+  .couple-editorial-header h2 { font-size: clamp(36px, 9vw, 50px); }
+  .couple-introduction { font-size: 16px; line-height: 1.6; margin-top: 18px; }
+  .couple-desktop-break { display: none; }
+  .couple-editorial-stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: 'portrait portrait' 'groom bride'; gap: 42px 24px; align-items: start; }
+  .couple-portrait { width: min(280px, calc(100% - 32px)); justify-self: center; }
+  .couple-date-stamp { width: 84px; height: 84px; right: -20px; bottom: 55px; }
+  .couple-date-stamp strong { font-size: 31px; }
+  .couple-date-stamp span { font-size: 9px; }
+  .couple-role { font-size: 9px; margin-bottom: 12px; letter-spacing: .2em; }
+  .couple-person h3 { font-size: clamp(27px, 7.5vw, 35px); }
+  .couple-tamil-name { font-size: 12px; }
+  .couple-degree { font-size: 14px; }
+  .couple-occupation, .couple-native { font-size: 14px; }
+  .couple-parents { font-size: 15px; }
+  .couple-family-label { font-size: 13px; }
+  .couple-person-rule { margin-top: 20px; margin-bottom: 17px; }
+  .couple-celebration { margin-top: 38px; padding: 25px 22px; grid-template-columns: minmax(0, 1fr); text-align: center; gap: 22px; }
+  .couple-celebration-heading { justify-content: center; }
+  .couple-celebration-date { border-left: 0; border-top: 1px solid rgba(247, 237, 219, .24); padding: 20px 0 0; }
+  .couple-celebration-venue { grid-column: auto; }
+}
+
+.couple-person { min-width: 0; overflow-wrap: anywhere; }
+
+/* A sealed envelope opens into a readable, unfolding invitation letter. */
+.letter-invitation {
+  padding: 86px 24px 76px;
+  min-height: 100svh;
+  color: #f5e6ca;
+  background: radial-gradient(ellipse at 50% 35%, #3c1720, #100708 72%);
+}
+.letter-section-header { position: relative; z-index: 30; text-align: center; margin: 0 auto 74px; max-width: 600px; }
+.letter-section-eyebrow { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: .25em; color: #d7b886; margin: 0 0 18px; }
+.letter-section-header h2 { margin: 0; color: #f8e8ce; font: 500 clamp(36px, 5vw, 56px)/1.1 'Cormorant Garamond', Georgia, serif; }
+.letter-section-header > p:last-child { margin: 16px 0 0; font-size: 17px; line-height: 1.6; color: #d9c4af; }
+.letter-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); width: min(640px, 100%); margin: 0 auto; z-index: 30; }
+.wedding-envelope { position: relative; grid-area: 1 / 1; align-self: start; width: 100%; aspect-ratio: 1.6; perspective: 1100px; margin: 0 0 32px; }
+.envelope-back { position: absolute; inset: 0; z-index: 0; border: 1px solid #c9ad79; border-radius: 8px; background: #dfcda9; box-shadow: 0 35px 70px rgba(0, 0, 0, .4); }
+.envelope-letter-peek { position: absolute; inset: 12% 7% 8%; z-index: 2; display: flex; align-items: center; flex-direction: column; gap: 20px; padding-top: 34px; background: #fff9ee; color: #693039; font: 500 25px/1.2 'Cormorant Garamond', Georgia, serif; border: 1px solid #d6bd8d; border-radius: 4px; }
+.envelope-pocket { position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: 7px; overflow: hidden; }
+.envelope-pocket i { position: absolute; inset: 0; background: linear-gradient(110deg, #ecddbd, #f7ecd7); clip-path: polygon(0 0, 58% 57%, 0 100%); }
+.envelope-pocket i:nth-child(2) { background: linear-gradient(250deg, #ead7b3, #f5e9d0); clip-path: polygon(100% 0, 42% 57%, 100% 100%); }
+.envelope-pocket > span { position: absolute; inset: 0; background: linear-gradient(180deg, #efdfbd, #f9efd9); clip-path: polygon(0 100%, 0 78%, 50% 45%, 100% 78%, 100% 100%); }
+.envelope-flap { position: absolute; inset: 0 0 auto; height: 59%; z-index: 5; background: linear-gradient(175deg, #fff5df, #e6d2a9); clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0; filter: drop-shadow(0 2px 2px rgba(91, 53, 26, .15)); }
+.envelope-open-button { position: absolute; inset: 0; z-index: 6; width: 100%; border: 0; background: transparent; color: #673537; cursor: pointer; border-radius: 8px; font-family: inherit; }
+.envelope-open-button:disabled { pointer-events: none; }
+.envelope-open-button:focus-visible { outline: 3px solid #f7d58c; outline-offset: 9px; }
+.envelope-wax-seal { position: absolute; top: 46%; left: calc(50% - 43px); width: 86px; height: 86px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #e5c58b; background: radial-gradient(circle at 33% 25%, #9e4653, #672532 65%, #47121f); border: 5px solid #7c303d; border-radius: 47% 53% 48% 50%; box-shadow: inset 0 0 0 2px rgba(239, 188, 141, .25), 1px 6px 10px rgba(75, 32, 24, .24); font: 500 29px/1 'Cormorant Garamond', Georgia, serif; }
+.envelope-wax-seal i { width: 1px; height: 29px; background: #c99b66; transform: rotate(25deg); }
+.envelope-address { position: absolute; top: 76%; left: 12px; right: 12px; font: 400 clamp(18px, 3vw, 27px)/1.2 'Dancing Script', cursive; }
+.envelope-open-hint { position: absolute; bottom: 8%; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 10px; letter-spacing: .2em; color: #805c3b; }
+.invitation-letter-wrap { position: relative; grid-area: 1 / 1; z-index: 10; min-width: 0; }
+.invitation-letter { position: relative; padding: 45px 42px 38px; color: #542d2a; background: linear-gradient(135deg, #fffaf0, #f6ecd9); border: 1px solid #d8bd85; border-radius: 4px; box-shadow: 0 30px 70px rgba(0, 0, 0, .32); outline: none; }
+.invitation-letter::before { content: ''; position: absolute; inset: 11px; border: 1px solid rgba(153, 110, 54, .35); pointer-events: none; }
+.letter-paper-heading { position: relative; text-align: center; }
+.letter-paper-heading > svg { margin: 0 auto 18px; color: #9b713e; }
+.letter-paper-heading > p:first-of-type { font-size: 10px; letter-spacing: .2em; color: #8b6239; margin: 0 0 22px; }
+.letter-paper-heading h3 { margin: 0; color: #642c36; font: 600 clamp(34px, 5vw, 46px)/1.1 'Cormorant Garamond', Georgia, serif; }
+.letter-paper-heading h3 > span { display: block; }
+.letter-paper-heading h3 em { display: block; margin: 8px 0; font: 400 32px/.9 'Dancing Script', cursive; color: #9b713e; }
+.letter-personal-message { margin: 25px 0 0; font-size: 17px; line-height: 1.6; color: #705344; }
+.letter-unfolded-details { overflow: hidden; }
+.letter-families { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; margin-top: 30px; padding-top: 24px; border-top: 1px solid #d9c5a1; text-align: center; }
+.letter-families > div { min-width: 0; overflow-wrap: anywhere; }
+.letter-families span { display: block; margin-bottom: 8px; color: #936c3d; font-size: 9px; font-weight: 600; letter-spacing: .2em; }
+.letter-families strong { display: block; color: #642c36; font-size: 19px; font-weight: 600; }
+.letter-families p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: #705344; }
+.letter-date { text-align: center; font-size: 20px; color: #642c36; font-weight: 600; margin: 28px 0 24px; }
+.letter-events { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; padding: 23px 0; border-top: 1px solid #d9c5a1; border-bottom: 1px solid #d9c5a1; }
+.letter-event { text-align: center; min-width: 0; }
+.letter-event h4 { margin: 0 0 9px; font: 600 23px/1.15 'Cormorant Garamond', Georgia, serif; color: #642c36; }
+.letter-event p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: #705344; }
+.letter-event .letter-event-time { font-weight: 600; color: #542d2a; }
+.letter-event .letter-event-venue { margin-top: 10px; }
+.letter-event a { display: inline-flex; align-items: center; gap: 3px; margin-top: 12px; color: #76343e; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.letter-closing { margin: 25px 0 12px; color: #705344; font-size: 16px; line-height: 1.5; text-align: center; font-style: italic; }
+.letter-signature { margin: 0; color: #76343e; text-align: center; font: 400 28px/1.4 'Dancing Script', cursive; }
+.letter-compliments { margin: 16px 0 0; font-size: 12px; line-height: 1.5; color: #856b54; text-align: center; }
+.letter-close-button { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; margin: 26px auto 0; padding: 10px 20px; border: 1px solid #a8875b; border-radius: 30px; background: #2b1119; color: #f4dfbc; font: 400 15px/1.4 'EB Garamond', Georgia, serif; cursor: pointer; }
+.letter-close-button:hover { background: #51232e; }
+.letter-close-button:focus-visible { outline: 2px solid #f7d58c; outline-offset: 4px; }
+@media (max-width: 540px) {
+  .letter-invitation { padding: 76px 20px 64px; }
+  .letter-section-header { margin-bottom: 60px; }
+  .letter-section-header > p:last-child { font-size: 16px; }
+  .envelope-wax-seal { width: 62px; height: 62px; left: calc(50% - 31px); top: 40%; font-size: 23px; border-width: 4px; }
+  .envelope-wax-seal i { height: 24px; }
+  .envelope-address { top: 76%; font-size: 19px; }
+  .envelope-open-hint { bottom: 7%; font-size: 8px; letter-spacing: .13em; gap: 6px; }
+  .envelope-open-hint svg { width: 12px; height: 12px; }
+  .envelope-letter-peek { padding-top: 20px; gap: 12px; font-size: 19px; }
+  .invitation-letter { padding: 32px 23px 28px; }
+  .letter-paper-heading > p:first-of-type { font-size: 9px; letter-spacing: .13em; }
+  .letter-families { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .letter-events { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .letter-event + .letter-event { border-top: 1px dashed #d9c5a1; margin-top: 22px; padding-top: 22px; }
+  .letter-date { font-size: 19px; }
+  .letter-signature { font-size: 25px; }
+}

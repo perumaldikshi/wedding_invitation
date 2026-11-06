@@ -1,179 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUpRight, Sparkle } from 'lucide-react';
 import { getCountdown, formatCountdownUnit } from '../../utils/countdown';
-import OrnamentalDivider from '../ui/OrnamentalDivider';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import wedding from '../../config/wedding';
-
-function CountdownUnit({ value, label }) {
-  const prevRef = useRef(value);
-  const changed = prevRef.current !== value;
-  prevRef.current = value;
-
-  return (
-    <div className="flex flex-col items-center">
-      <div
-        className="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center rounded"
-        style={{
-          background: 'rgba(212,160,23,0.08)',
-          border: '1px solid rgba(212,160,23,0.3)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-        }}
-      >
-        <motion.span
-          key={value}
-          initial={changed ? { y: -20, opacity: 0 } : false}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="font-display text-3xl md:text-4xl"
-          style={{ color: '#FFD700', textShadow: '0 0 15px rgba(212,160,23,0.4)' }}
-          aria-label={`${value} ${label}`}
-        >
-          {formatCountdownUnit(value)}
-        </motion.span>
-      </div>
-      <span
-        className="mt-2 text-xs tracking-widest"
-        style={{ color: 'rgba(212,160,23,0.5)' }}
-      >
-        {label}
-      </span>
-    </div>
-  );
+function Unit({ value, label, reduced }) {
+  return <div className="forever-unit"><div className="forever-digit"><AnimatePresence mode="popLayout" initial={false}><motion.span key={value} initial={reduced ? false : { y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={reduced ? {} : { y: -12, opacity: 0 }} transition={{ duration: 0.22 }}>{formatCountdownUnit(value)}</motion.span></AnimatePresence></div><span>{label}</span></div>;
 }
-
 export default function Countdown() {
   const [time, setTime] = useState(() => getCountdown(wedding.weddingDate));
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(getCountdown(wedding.weddingDate));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <section
-      id="countdown"
-      className="scene-section flex flex-col items-center justify-center px-4 py-20 text-center"
-      style={{ background: 'linear-gradient(180deg, #0a0505, #1a0808, #0a0505)' }}
-      aria-label="Countdown to wedding"
-    >
-      {/* Decorative rings */}
-      {[200, 150, 100].map((size, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: size,
-            height: size,
-            border: `1px solid rgba(212,160,23,${0.05 + i * 0.03})`,
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            animation: `spin ${15 + i * 5}s linear infinite ${i % 2 === 0 ? '' : 'reverse'}`,
-          }}
-          aria-hidden="true"
-        />
-      ))}
-      <style>{`@keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }`}</style>
-
-      <div className="relative z-10 max-w-2xl w-full">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mb-6 flex justify-center"
-          aria-hidden="true"
-        >
-          <svg width="54" height="64" viewBox="0 0 54 64" fill="none" stroke="#d4a747" strokeWidth="1.5">
-            <path d="M10 6h34M10 58h34M15 7c0 13 5 18 12 25-7 7-12 12-12 25M39 7c0 13-5 18-12 25 7 7 12 12 12 25" />
-            <path d="M18 16h18M19 49h16l-8-8-8 8Z" fill="rgba(212,167,71,.18)" />
-          </svg>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="tracking-[0.4em] text-xs mb-4"
-          style={{ color: 'rgba(212,160,23,0.6)' }}
-        >
-          THE BIG DAY
-        </motion.p>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-display text-4xl md:text-5xl mb-2"
-          style={{ color: '#FFD700' }}
-        >
-          Counting Down
-        </motion.h2>
-
-        <OrnamentalDivider />
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-sm mb-10"
-          style={{ color: 'rgba(247,231,206,0.5)' }}
-        >
-          Until {wedding.muhurthamDate}
-        </motion.p>
-
-        {time.passed ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center"
-          >
-            <div className="invitation-monogram mx-auto mb-4" aria-hidden="true">S <i /> G</div>
-            <h3
-              className="font-display text-3xl md:text-4xl mb-3"
-              style={{ color: '#FFD700' }}
-            >
-              The Wedding Has Begun!
-            </h3>
-            <p style={{ color: 'rgba(247,231,206,0.7)' }}>
-              Wishing {wedding.groomName} & {wedding.brideName} a lifetime of love and happiness.
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <div
-              className="flex items-center justify-center gap-4 md:gap-8"
-              role="timer"
-              aria-live="off"
-            >
-              <CountdownUnit value={time.days} label="DAYS" />
-              <span className="text-3xl md:text-4xl mb-6" style={{ color: '#D4A017' }}>:</span>
-              <CountdownUnit value={time.hours} label="HOURS" />
-              <span className="text-3xl md:text-4xl mb-6" style={{ color: '#D4A017' }}>:</span>
-              <CountdownUnit value={time.minutes} label="MINUTES" />
-              <span className="text-3xl md:text-4xl mb-6" style={{ color: '#D4A017' }}>:</span>
-              <CountdownUnit value={time.seconds} label="SECONDS" />
-            </div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-              className="mt-8 text-base italic"
-              style={{ color: 'rgba(247,231,206,0.5)', fontFamily: 'EB Garamond, serif' }}
-            >
-              "And they lived happily ever after…"
-            </motion.p>
-          </motion.div>
-        )}
-      </div>
-    </section>
-  );
+  const reduced = useReducedMotion();
+  useEffect(() => { const timer = setInterval(() => setTime(getCountdown(wedding.weddingDate)), 1000); return () => clearInterval(timer); }, []);
+  return <section id="countdown" className="scene-section forever-countdown" aria-labelledby="forever-title">
+    <div className="journal-section-index" data-aos="fade-up"><span>05 / UNTIL FOREVER</span><span>13 NOVEMBER 2026</span></div>
+    <div className="forever-layout"><div data-aos="fade-up"><motion.div className="forever-star" animate={reduced ? {} : { rotate: 360 }} transition={{ duration: 45, repeat: Infinity, ease: 'linear' }} aria-hidden="true"><Sparkle size={66} strokeWidth={0.8} /></motion.div><h2 id="forever-title">Every second,<br /><em>closer to you.</em></h2><p>{time.passed ? 'The day we have been waiting for is here.' : 'The next chapter is almost here. And you are part of it.'}</p></div>
+      <div className="forever-clock-side" data-aos="fade-up" data-aos-delay="100">{time.passed ? <div className="forever-arrived"><span>IT IS OUR WEDDING DAY</span><strong>Let the celebrations begin.</strong></div> : <div className="forever-clock" role="timer" aria-live="off" aria-label="Time until the wedding"><Unit value={time.days} label="DAYS" reduced={reduced} /><Unit value={time.hours} label="HOURS" reduced={reduced} /><Unit value={time.minutes} label="MINUTES" reduced={reduced} /><Unit value={time.seconds} label="SECONDS" reduced={reduced} /></div>}<p>Friday, 13 November 2026 <span>06:00 AM IST</span></p><a href="#final" className="journal-text-link">Save a little space in your calendar <ArrowUpRight size={17} /></a></div>
+    </div>
+  </section>;
 }
