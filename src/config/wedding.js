@@ -149,7 +149,8 @@ export const wedding = {
   // ── SOCIAL / SHARE ───────────────────────────────────────
   shareTitle: 'Wedding Invitation: V. Sridhar ♥ R. Gowri',
   shareText: 'You are cordially invited to celebrate the wedding of V. Sridhar M.Sc., (CS) & R. Gowri B.Com., on Friday, 13th November 2026 at Mailam.',
-  shareUrl: 'https://sri-weds-gowri-wedding-invitation.vercel.app/',
+  // Versioned so WhatsApp refreshes the link preview after metadata changes.
+  shareUrl: 'https://sri-weds-gowri-wedding-invitation.vercel.app/?v=temple-photo-2',
 
   // ── ICS CALENDAR ─────────────────────────────────────────
   icsEvent: {
